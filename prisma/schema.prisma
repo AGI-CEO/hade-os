@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Define models based on the application's data requirements
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  name          String?
+  password      String
+  role          String    @default("user") // user, admin, etc.
+  userType      String    @default("landlord") // landlord, tenant
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  properties    Property[]
+  tenant        Tenant?   @relation("UserToTenant")
+
+  @@index([email])
+  @@index([userType])
+}
+
+model Property {
+  id            String    @id @default(uuid())
+  address       String
+  city          String
+  state         String
+  zipCode       String
+  image         String?
+  value         Float
+  occupancy     String    // occupied, vacant
+  rentAmount    Float?
+  rentDue       DateTime?
+  dateAdded     DateTime  @default(now())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  maintenanceRequests MaintenanceRequest[]
+  tenants       Tenant[]
+
+  @@index([userId])
+}
+
+model MaintenanceRequest {
+  id            String    @id @default(uuid())
+  title         String
+  description   String
+  status        String    // pending, in-progress, completed
+  priority      String    // low, medium, high
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  propertyId    String
+  property      Property  @relation(fields: [propertyId], references: [id])
+
+  @@index([propertyId])
+}
+
+model PortfolioSnapshot {
+  id            String    @id @default(uuid())
+  totalValue    Float
+  monthlyIncome Float
+  snapshotDate  DateTime  @default(now())
+
+  @@index([snapshotDate])
+}
+
+model Tenant {
+  id            String    @id @default(uuid())
+  name          String
+  email         String
+  phone         String
+  image         String?
+  leaseStart    DateTime
+  leaseEnd      DateTime
+  status        String    // active, pending, past
+  rentAmount    Float
+  lastPayment   DateTime?
+  happinessScore Int      @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  propertyId    String
+  property      Property  @relation(fields: [propertyId], references: [id])
+  userId        String?   @unique
+  user          User?     @relation("UserToTenant", fields: [userId], references: [id])
+
+  @@index([propertyId])
+  @@index([email])
+}

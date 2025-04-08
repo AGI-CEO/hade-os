@@ -1,11 +1,19 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { Bell, MessageSquare, Search, User } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  Bell,
+  MessageSquare,
+  Search,
+  User,
+  Settings,
+  LogOut,
+  Home,
+} from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,11 +21,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Badge } from "@/components/ui/badge"
+} from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/contexts/auth-context";
+import Link from "next/link";
 
 export function TopBar() {
-  const [searchFocused, setSearchFocused] = useState(false)
+  const [searchFocused, setSearchFocused] = useState(false);
+  const { user, logout } = useAuth();
 
   return (
     <div className="border-b border-border p-4 flex items-center justify-between">
@@ -41,44 +52,111 @@ export function TopBar() {
       </div>
 
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5" />
-          <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center bg-primary text-primary-foreground">
-            3
-          </Badge>
-        </Button>
-
-        <Button variant="ghost" size="icon">
-          <MessageSquare className="h-5 w-5" />
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="relative">
+              <Bell className="h-5 w-5" />
+              <Badge className="absolute -top-1 -right-1 h-4 w-4 p-0 flex items-center justify-center text-[10px]">
+                3
+              </Badge>
+              <span className="sr-only">Notifications</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="end"
+            className="w-80 bg-card border-border"
+          >
+            <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <div className="max-h-80 overflow-y-auto">
+              {[1, 2, 3].map((i) => (
+                <DropdownMenuItem key={i} className="p-3 cursor-pointer">
+                  <div className="flex items-start gap-3">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback>
+                        {user?.name?.charAt(0) || "U"}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 space-y-1">
+                      <p className="text-sm font-medium leading-none">
+                        {user?.userType === "landlord"
+                          ? "New maintenance request"
+                          : "Maintenance update"}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {user?.userType === "landlord"
+                          ? "A tenant submitted a new maintenance request"
+                          : "Your maintenance request has been updated"}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        2 hours ago
+                      </p>
+                    </div>
+                  </div>
+                </DropdownMenuItem>
+              ))}
+            </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="cursor-pointer justify-center">
+              <span className="text-xs text-primary">
+                View all notifications
+              </span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-              <Avatar className="h-9 w-9">
-                <AvatarImage src="/images/headshot.jpg" alt="User" />
-                <AvatarFallback>JD</AvatarFallback>
-              </Avatar>
-            </Button>
+            <Avatar className="h-8 w-8 cursor-pointer">
+              <AvatarFallback>{user?.name?.charAt(0) || "U"}</AvatarFallback>
+            </Avatar>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56" align="end" forceMount>
+          <DropdownMenuContent
+            align="end"
+            className="w-56 bg-card border-border"
+          >
             <DropdownMenuLabel>
-              <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">Blaise Pascual</p>
-                <p className="text-xs leading-none text-muted-foreground">Property Manager</p>
-              </div>
+              {user?.name ||
+                (user?.userType === "landlord" ? "Landlord" : "Tenant")}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <User className="mr-2 h-4 w-4" />
-              <span>Profile</span>
+
+            <DropdownMenuItem asChild>
+              <Link
+                href={user?.userType === "landlord" ? "/" : "/connect"}
+                className="cursor-pointer"
+              >
+                <Home className="mr-2 h-4 w-4" />
+                <span>Dashboard</span>
+              </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
+
+            <DropdownMenuItem asChild>
+              <Link
+                href={
+                  user?.userType === "landlord"
+                    ? "/profile"
+                    : "/connect/settings"
+                }
+                className="cursor-pointer"
+              >
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Settings</span>
+              </Link>
+            </DropdownMenuItem>
+
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Log out</DropdownMenuItem>
+
+            <DropdownMenuItem
+              onClick={() => logout()}
+              className="cursor-pointer text-red-500"
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Log out</span>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
     </div>
-  )
+  );
 }

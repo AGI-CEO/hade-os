@@ -1,18 +1,19 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { MapPin, X } from "lucide-react"
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { MapPin, X } from "lucide-react";
 
 // Sample property data
 const properties = [
   {
     id: 1,
     address: "123 Main St, Austin, TX",
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/house%201-2A4jS3pKxw2ZYNnZw1suipKoGBkriL.jpeg",
+    image:
+      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/house%201-2A4jS3pKxw2ZYNnZw1suipKoGBkriL.jpeg",
     value: 450000,
     occupancy: "occupied",
     rentAmount: 2200,
@@ -22,7 +23,8 @@ const properties = [
   {
     id: 2,
     address: "456 Oak Ave, San Antonio, TX",
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/house2-jcDyCtfDDcUMusg6iM6KDVh2JwqXri.webp",
+    image:
+      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/house2-jcDyCtfDDcUMusg6iM6KDVh2JwqXri.webp",
     value: 1250000,
     occupancy: "vacant",
     rentAmount: 0,
@@ -32,45 +34,48 @@ const properties = [
   {
     id: 3,
     address: "789 Pine Blvd, Houston, TX",
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/house3-4j1H5hKH2a7fRUYyOCfp5CHZ1OwBxU.webp",
+    image:
+      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/house3-4j1H5hKH2a7fRUYyOCfp5CHZ1OwBxU.webp",
     value: 510000,
     occupancy: "occupied",
     rentAmount: 2500,
     lat: 29.7604,
     lng: -95.3698,
   },
-]
+];
 
 type PortfolioMapProps = {
-  filterStatus?: "all" | "occupied" | "vacant"
-}
+  filterStatus?: "all" | "occupied" | "vacant";
+};
 
 export function PortfolioMap({ filterStatus = "all" }: PortfolioMapProps) {
-  const [selectedProperty, setSelectedProperty] = useState<number | null>(null)
-  const [isMapLoaded, setIsMapLoaded] = useState(false)
+  const [selectedProperty, setSelectedProperty] = useState<number | null>(null);
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
 
   const filteredProperties = properties.filter((property) => {
-    if (filterStatus === "all") return true
-    return property.occupancy === filterStatus
-  })
+    if (filterStatus === "all") return true;
+    return property.occupancy === filterStatus;
+  });
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
       maximumFractionDigits: 0,
-    }).format(amount)
-  }
+    }).format(amount);
+  };
 
-  const property = selectedProperty ? properties.find((p) => p.id === selectedProperty) : null
+  const property = selectedProperty
+    ? properties.find((p) => p.id === selectedProperty)
+    : null;
 
   // Simulate map loading
   useEffect(() => {
     const timer = setTimeout(() => {
-      setIsMapLoaded(true)
-    }, 1000)
-    return () => clearTimeout(timer)
-  }, [])
+      setIsMapLoaded(true);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="relative">
@@ -89,7 +94,7 @@ export function PortfolioMap({ filterStatus = "all" }: PortfolioMapProps) {
             <div
               className="absolute inset-0"
               style={{
-                backgroundImage: `linear-gradient(to right, rgba(0, 255, 255, 0.05) 1px, transparent 1px), 
+                backgroundImage: `linear-gradient(to right, rgba(0, 255, 255, 0.05) 1px, transparent 1px),
                                linear-gradient(to bottom, rgba(0, 255, 255, 0.05) 1px, transparent 1px)`,
                 backgroundSize: "50px 50px",
               }}
@@ -110,7 +115,9 @@ export function PortfolioMap({ filterStatus = "all" }: PortfolioMapProps) {
               >
                 <div
                   className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                    property.occupancy === "occupied" ? "bg-green-500" : "bg-gray-500"
+                    property.occupancy === "occupied"
+                      ? "bg-green-500"
+                      : "bg-gray-500"
                   }`}
                 >
                   <MapPin className="h-4 w-4 text-white" />
@@ -136,17 +143,21 @@ export function PortfolioMap({ filterStatus = "all" }: PortfolioMapProps) {
                 <div className="relative">
                   <div className="relative h-32">
                     <img
-                      src={property.image || "/placeholder.svg"}
+                      src={property.image || "/house-placeholder.svg"}
                       alt={property.address}
                       className="w-full h-full object-cover rounded-t-lg"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent rounded-t-lg" />
                     <Badge
                       className={`absolute top-2 right-2 ${
-                        property.occupancy === "occupied" ? "bg-green-500" : "bg-gray-500"
+                        property.occupancy === "occupied"
+                          ? "bg-green-500"
+                          : "bg-gray-500"
                       }`}
                     >
-                      {property.occupancy === "occupied" ? "Occupied" : "Vacant"}
+                      {property.occupancy === "occupied"
+                        ? "Occupied"
+                        : "Vacant"}
                     </Badge>
                     <Button
                       variant="ghost"
@@ -158,9 +169,13 @@ export function PortfolioMap({ filterStatus = "all" }: PortfolioMapProps) {
                     </Button>
                   </div>
                   <div className="p-4">
-                    <h3 className="font-medium text-primary-foreground mb-1">{property.address}</h3>
+                    <h3 className="font-medium text-primary-foreground mb-1">
+                      {property.address}
+                    </h3>
                     <div className="flex justify-between items-center">
-                      <span className="text-lg font-bold text-primary glow-text">{formatCurrency(property.value)}</span>
+                      <span className="text-lg font-bold text-primary glow-text">
+                        {formatCurrency(property.value)}
+                      </span>
                       <Button size="sm">View Details</Button>
                     </div>
                   </div>
@@ -171,5 +186,5 @@ export function PortfolioMap({ filterStatus = "all" }: PortfolioMapProps) {
         </motion.div>
       )}
     </div>
-  )
+  );
 }

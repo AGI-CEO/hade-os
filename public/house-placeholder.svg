@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" fill="none">
+  <rect width="1200" height="1200" fill="#0A0A0A" rx="3"/>
+  <g opacity=".9">
+    <!-- House outline -->
+    <path fill="#111111" d="M600 300L300 550V900H900V550L600 300Z" />
+    <path stroke="#00FFFF" stroke-width="10" d="M600 300L300 550V900H900V550L600 300Z" />
+
+    <!-- Roof -->
+    <path fill="#111111" d="M600 200L250 500H350L600 300L850 500H950L600 200Z" />
+    <path stroke="#00FFFF" stroke-width="10" d="M600 200L250 500H350L600 300L850 500H950L600 200Z" />
+
+    <!-- Door -->
+    <path fill="#111111" d="M550 900V650H650V900H550Z" />
+    <path stroke="#00FFFF" stroke-width="8" d="M550 900V650H650V900H550Z" />
+
+    <!-- Windows -->
+    <rect x="400" y="600" width="100" height="100" fill="#111111" stroke="#00FFFF" stroke-width="8" />
+    <rect x="700" y="600" width="100" height="100" fill="#111111" stroke="#00FFFF" stroke-width="8" />
+
+    <!-- Doorknob -->
+    <circle cx="625" cy="775" r="10" fill="#00FFFF" />
+  </g>
+</svg>

@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Compass,
   Search,
@@ -16,25 +16,36 @@ import {
   Plus,
   Save,
   Home,
-} from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import { Slider } from "@/components/ui/slider"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { AISuggestions } from "@/components/ai-suggestions"
-import { PropertyValuation } from "@/components/property-valuation"
-import { CashFlowAnalyzer } from "@/components/cash-flow-analyzer"
+} from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Slider } from "@/components/ui/slider";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { AISuggestions } from "@/components/ai-suggestions";
+import { PropertyValuation } from "@/components/property-valuation";
+import { CashFlowAnalyzer } from "@/components/cash-flow-analyzer";
 
 export default function ProspectingPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [showPropertyDetails, setShowPropertyDetails] = useState(false)
-  const [priceRange, setPriceRange] = useState([100000, 500000])
-  const [cashFlowMin, setCashFlowMin] = useState(200)
-  const [capRateMin, setCapRateMin] = useState(5)
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showPropertyDetails, setShowPropertyDetails] = useState(false);
+  const [priceRange, setPriceRange] = useState([100000, 500000]);
+  const [cashFlowMin, setCashFlowMin] = useState(200);
+  const [capRateMin, setCapRateMin] = useState(5);
 
   // Sample search criteria
   const searchCriteria = {
@@ -44,13 +55,17 @@ export default function ProspectingPage() {
     bedrooms: "3+",
     cashFlow: `$${cashFlowMin}+`,
     capRate: `${capRateMin}%+`,
-  }
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight text-primary-foreground glow-text">Prospecting</h1>
-        <p className="text-muted-foreground">Discover and analyze potential real estate investment opportunities</p>
+        <h1 className="text-3xl font-bold tracking-tight text-primary-foreground glow-text">
+          Prospecting
+        </h1>
+        <p className="text-muted-foreground">
+          Discover and analyze potential real estate investment opportunities
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -61,8 +76,12 @@ export default function ProspectingPage() {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">AI-Powered</p>
-              <h2 className="text-2xl font-bold text-primary-foreground glow-text">Suggestions</h2>
-              <p className="text-sm text-muted-foreground">Personalized for your goals</p>
+              <h2 className="text-2xl font-bold text-primary-foreground glow-text">
+                Suggestions
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Personalized for your goals
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -74,8 +93,12 @@ export default function ProspectingPage() {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Market Analysis</p>
-              <h2 className="text-2xl font-bold text-primary-foreground glow-text">Insights</h2>
-              <p className="text-sm text-muted-foreground">Trends and opportunities</p>
+              <h2 className="text-2xl font-bold text-primary-foreground glow-text">
+                Insights
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Trends and opportunities
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -87,8 +110,12 @@ export default function ProspectingPage() {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Deal Score</p>
-              <h2 className="text-2xl font-bold text-primary-foreground glow-text">Analysis</h2>
-              <p className="text-sm text-muted-foreground">Find the best investments</p>
+              <h2 className="text-2xl font-bold text-primary-foreground glow-text">
+                Analysis
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Find the best investments
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -122,13 +149,17 @@ export default function ProspectingPage() {
 
       <Card className="bg-card border-border">
         <CardHeader className="pb-2">
-          <CardTitle className="text-primary-foreground">Search Criteria</CardTitle>
+          <CardTitle className="text-primary-foreground">
+            Search Criteria
+          </CardTitle>
           <CardDescription>Customize your property search</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-primary-foreground">Location</label>
+              <label className="text-sm font-medium text-primary-foreground">
+                Location
+              </label>
               <div className="relative">
                 <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -140,7 +171,9 @@ export default function ProspectingPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-primary-foreground">Property Type</label>
+              <label className="text-sm font-medium text-primary-foreground">
+                Property Type
+              </label>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="w-full justify-between">
@@ -159,7 +192,9 @@ export default function ProspectingPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-primary-foreground">Bedrooms</label>
+              <label className="text-sm font-medium text-primary-foreground">
+                Bedrooms
+              </label>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="w-full justify-between">
@@ -184,7 +219,8 @@ export default function ProspectingPage() {
               <div className="flex justify-between text-sm">
                 <label htmlFor="price-range">Price Range</label>
                 <span className="text-primary-foreground">
-                  ${priceRange[0].toLocaleString()} - ${priceRange[1].toLocaleString()}
+                  ${priceRange[0].toLocaleString()} - $
+                  {priceRange[1].toLocaleString()}
                 </span>
               </div>
               <Slider
@@ -202,7 +238,9 @@ export default function ProspectingPage() {
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <label htmlFor="cash-flow">Minimum Monthly Cash Flow</label>
-                  <span className="text-primary-foreground">${cashFlowMin}</span>
+                  <span className="text-primary-foreground">
+                    ${cashFlowMin}
+                  </span>
                 </div>
                 <Slider
                   id="cash-flow"
@@ -272,7 +310,10 @@ export default function ProspectingPage() {
               transition={{ duration: 0.3 }}
             >
               <TabsContent value="suggestions" className="mt-0">
-                <AISuggestions searchCriteria={searchCriteria} setShowPropertyDetails={setShowPropertyDetails} />
+                <AISuggestions
+                  searchCriteria={searchCriteria}
+                  setShowPropertyDetails={setShowPropertyDetails}
+                />
               </TabsContent>
             </motion.div>
 
@@ -309,13 +350,17 @@ export default function ProspectingPage() {
             <Compass className="mr-2 h-5 w-5 text-primary" />
             Market Insights
           </CardTitle>
-          <CardDescription>Current trends in your target markets</CardDescription>
+          <CardDescription>
+            Current trends in your target markets
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div className="p-4 rounded-lg border border-border bg-card/50">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="font-medium text-primary-foreground">Austin, TX</h3>
+                <h3 className="font-medium text-primary-foreground">
+                  Austin, TX
+                </h3>
                 <Badge className="bg-green-500">Hot Market</Badge>
               </div>
               <div className="space-y-2">
@@ -324,7 +369,9 @@ export default function ProspectingPage() {
                   <span className="text-primary-foreground">$450,000</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">YoY Appreciation</span>
+                  <span className="text-muted-foreground">
+                    YoY Appreciation
+                  </span>
                   <span className="text-green-500">+8.2%</span>
                 </div>
                 <div className="flex justify-between text-sm">
@@ -340,7 +387,9 @@ export default function ProspectingPage() {
 
             <div className="p-4 rounded-lg border border-border bg-card/50">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="font-medium text-primary-foreground">Houston, TX</h3>
+                <h3 className="font-medium text-primary-foreground">
+                  Houston, TX
+                </h3>
                 <Badge className="bg-green-500">Rising</Badge>
               </div>
               <div className="space-y-2">
@@ -349,7 +398,9 @@ export default function ProspectingPage() {
                   <span className="text-primary-foreground">$320,000</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">YoY Appreciation</span>
+                  <span className="text-muted-foreground">
+                    YoY Appreciation
+                  </span>
                   <span className="text-green-500">+6.5%</span>
                 </div>
                 <div className="flex justify-between text-sm">
@@ -365,7 +416,9 @@ export default function ProspectingPage() {
 
             <div className="p-4 rounded-lg border border-border bg-card/50">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="font-medium text-primary-foreground">San Antonio, TX</h3>
+                <h3 className="font-medium text-primary-foreground">
+                  San Antonio, TX
+                </h3>
                 <Badge className="bg-amber-500">Stable</Badge>
               </div>
               <div className="space-y-2">
@@ -374,7 +427,9 @@ export default function ProspectingPage() {
                   <span className="text-primary-foreground">$280,000</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">YoY Appreciation</span>
+                  <span className="text-muted-foreground">
+                    YoY Appreciation
+                  </span>
                   <span className="text-green-500">+5.2%</span>
                 </div>
                 <div className="flex justify-between text-sm">
@@ -397,14 +452,16 @@ export default function ProspectingPage() {
       </Card>
 
       <AnimatePresence>
-        {showPropertyDetails && <PropertyDetailsModal onClose={() => setShowPropertyDetails(false)} />}
+        {showPropertyDetails && (
+          <PropertyDetailsModal onClose={() => setShowPropertyDetails(false)} />
+        )}
       </AnimatePresence>
     </div>
-  )
+  );
 }
 
 function PropertyDetailsModal({ onClose }: { onClose: () => void }) {
-  const [activeTab, setActiveTab] = useState("overview")
+  const [activeTab, setActiveTab] = useState("overview");
 
   return (
     <motion.div
@@ -422,7 +479,7 @@ function PropertyDetailsModal({ onClose }: { onClose: () => void }) {
       >
         <div className="relative h-64">
           <img
-            src="/placeholder.svg?height=400&width=800"
+            src="/house-placeholder.svg"
             alt="123 Main St, Austin, TX"
             className="w-full h-full object-cover"
           />
@@ -439,29 +496,47 @@ function PropertyDetailsModal({ onClose }: { onClose: () => void }) {
               <Zap className="h-3 w-3 mr-1" />
               Deal Score: 85
             </Badge>
-            <h2 className="text-2xl font-bold text-white drop-shadow-md">123 Main St, Austin, TX</h2>
-            <p className="text-white drop-shadow-md">$425,000 • 3 bed • 2 bath • 1,850 sqft</p>
+            <h2 className="text-2xl font-bold text-white drop-shadow-md">
+              123 Main St, Austin, TX
+            </h2>
+            <p className="text-white drop-shadow-md">
+              $425,000 • 3 bed • 2 bath • 1,850 sqft
+            </p>
           </div>
         </div>
 
         <div className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div className="p-4 rounded-lg border border-border bg-card/50">
-              <h3 className="text-sm text-muted-foreground mb-1">Estimated Cash Flow</h3>
+              <h3 className="text-sm text-muted-foreground mb-1">
+                Estimated Cash Flow
+              </h3>
               <div className="text-2xl font-bold text-green-500">$450/mo</div>
-              <p className="text-xs text-muted-foreground mt-1">Based on current market rents</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Based on current market rents
+              </p>
             </div>
 
             <div className="p-4 rounded-lg border border-border bg-card/50">
               <h3 className="text-sm text-muted-foreground mb-1">Cap Rate</h3>
-              <div className="text-2xl font-bold text-primary-foreground">6.2%</div>
-              <p className="text-xs text-muted-foreground mt-1">Above market average</p>
+              <div className="text-2xl font-bold text-primary-foreground">
+                6.2%
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Above market average
+              </p>
             </div>
 
             <div className="p-4 rounded-lg border border-border bg-card/50">
-              <h3 className="text-sm text-muted-foreground mb-1">Cash on Cash Return</h3>
-              <div className="text-2xl font-bold text-primary-foreground">8.5%</div>
-              <p className="text-xs text-muted-foreground mt-1">With 20% down payment</p>
+              <h3 className="text-sm text-muted-foreground mb-1">
+                Cash on Cash Return
+              </h3>
+              <div className="text-2xl font-bold text-primary-foreground">
+                8.5%
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                With 20% down payment
+              </p>
             </div>
           </div>
 
@@ -509,49 +584,79 @@ function PropertyDetailsModal({ onClose }: { onClose: () => void }) {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-4">
                       <div>
-                        <h3 className="text-lg font-medium text-primary-foreground mb-2">Property Details</h3>
+                        <h3 className="text-lg font-medium text-primary-foreground mb-2">
+                          Property Details
+                        </h3>
                         <div className="grid grid-cols-2 gap-2">
                           <div className="p-3 rounded-lg border border-border bg-card/50">
-                            <p className="text-xs text-muted-foreground">Property Type</p>
-                            <p className="text-sm font-medium text-primary-foreground">Single Family</p>
+                            <p className="text-xs text-muted-foreground">
+                              Property Type
+                            </p>
+                            <p className="text-sm font-medium text-primary-foreground">
+                              Single Family
+                            </p>
                           </div>
                           <div className="p-3 rounded-lg border border-border bg-card/50">
-                            <p className="text-xs text-muted-foreground">Year Built</p>
-                            <p className="text-sm font-medium text-primary-foreground">2005</p>
+                            <p className="text-xs text-muted-foreground">
+                              Year Built
+                            </p>
+                            <p className="text-sm font-medium text-primary-foreground">
+                              2005
+                            </p>
                           </div>
                           <div className="p-3 rounded-lg border border-border bg-card/50">
-                            <p className="text-xs text-muted-foreground">Lot Size</p>
-                            <p className="text-sm font-medium text-primary-foreground">0.25 acres</p>
+                            <p className="text-xs text-muted-foreground">
+                              Lot Size
+                            </p>
+                            <p className="text-sm font-medium text-primary-foreground">
+                              0.25 acres
+                            </p>
                           </div>
                           <div className="p-3 rounded-lg border border-border bg-card/50">
-                            <p className="text-xs text-muted-foreground">Square Feet</p>
-                            <p className="text-sm font-medium text-primary-foreground">1,850</p>
+                            <p className="text-xs text-muted-foreground">
+                              Square Feet
+                            </p>
+                            <p className="text-sm font-medium text-primary-foreground">
+                              1,850
+                            </p>
                           </div>
                         </div>
                       </div>
 
                       <div>
-                        <h3 className="text-lg font-medium text-primary-foreground mb-2">Features</h3>
+                        <h3 className="text-lg font-medium text-primary-foreground mb-2">
+                          Features
+                        </h3>
                         <div className="space-y-2">
                           <div className="flex items-center">
                             <div className="w-1 h-1 rounded-full bg-primary mr-2"></div>
-                            <span className="text-muted-foreground">Recently renovated kitchen</span>
+                            <span className="text-muted-foreground">
+                              Recently renovated kitchen
+                            </span>
                           </div>
                           <div className="flex items-center">
                             <div className="w-1 h-1 rounded-full bg-primary mr-2"></div>
-                            <span className="text-muted-foreground">New HVAC system (2022)</span>
+                            <span className="text-muted-foreground">
+                              New HVAC system (2022)
+                            </span>
                           </div>
                           <div className="flex items-center">
                             <div className="w-1 h-1 rounded-full bg-primary mr-2"></div>
-                            <span className="text-muted-foreground">Fenced backyard</span>
+                            <span className="text-muted-foreground">
+                              Fenced backyard
+                            </span>
                           </div>
                           <div className="flex items-center">
                             <div className="w-1 h-1 rounded-full bg-primary mr-2"></div>
-                            <span className="text-muted-foreground">Two-car garage</span>
+                            <span className="text-muted-foreground">
+                              Two-car garage
+                            </span>
                           </div>
                           <div className="flex items-center">
                             <div className="w-1 h-1 rounded-full bg-primary mr-2"></div>
-                            <span className="text-muted-foreground">Close to schools and shopping</span>
+                            <span className="text-muted-foreground">
+                              Close to schools and shopping
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -559,40 +664,66 @@ function PropertyDetailsModal({ onClose }: { onClose: () => void }) {
 
                     <div className="space-y-4">
                       <div>
-                        <h3 className="text-lg font-medium text-primary-foreground mb-2">Location</h3>
+                        <h3 className="text-lg font-medium text-primary-foreground mb-2">
+                          Location
+                        </h3>
                         <div className="h-40 rounded-lg border border-border bg-card/50 flex items-center justify-center">
                           <MapPin className="h-8 w-8 text-muted-foreground" />
-                          <span className="ml-2 text-muted-foreground">Map View</span>
+                          <span className="ml-2 text-muted-foreground">
+                            Map View
+                          </span>
                         </div>
                         <div className="mt-2 space-y-2">
                           <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">School District</span>
-                            <span className="text-primary-foreground">Austin ISD</span>
+                            <span className="text-muted-foreground">
+                              School District
+                            </span>
+                            <span className="text-primary-foreground">
+                              Austin ISD
+                            </span>
                           </div>
                           <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Walk Score</span>
-                            <span className="text-primary-foreground">72/100</span>
+                            <span className="text-muted-foreground">
+                              Walk Score
+                            </span>
+                            <span className="text-primary-foreground">
+                              72/100
+                            </span>
                           </div>
                           <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Crime Rate</span>
+                            <span className="text-muted-foreground">
+                              Crime Rate
+                            </span>
                             <span className="text-primary-foreground">Low</span>
                           </div>
                         </div>
                       </div>
 
                       <div>
-                        <h3 className="text-lg font-medium text-primary-foreground mb-2">Property History</h3>
+                        <h3 className="text-lg font-medium text-primary-foreground mb-2">
+                          Property History
+                        </h3>
                         <div className="space-y-2">
                           <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Last Sold</span>
-                            <span className="text-primary-foreground">Jun 2018 for $375,000</span>
+                            <span className="text-muted-foreground">
+                              Last Sold
+                            </span>
+                            <span className="text-primary-foreground">
+                              Jun 2018 for $375,000
+                            </span>
                           </div>
                           <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Price Change</span>
-                            <span className="text-green-500">+13.3% ($50,000)</span>
+                            <span className="text-muted-foreground">
+                              Price Change
+                            </span>
+                            <span className="text-green-500">
+                              +13.3% ($50,000)
+                            </span>
                           </div>
                           <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Days on Market</span>
+                            <span className="text-muted-foreground">
+                              Days on Market
+                            </span>
                             <span className="text-primary-foreground">15</span>
                           </div>
                         </div>
@@ -606,54 +737,82 @@ function PropertyDetailsModal({ onClose }: { onClose: () => void }) {
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <h3 className="text-lg font-medium text-primary-foreground mb-2">Income</h3>
+                      <h3 className="text-lg font-medium text-primary-foreground mb-2">
+                        Income
+                      </h3>
                       <div className="space-y-2">
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Estimated Monthly Rent</span>
-                          <span className="text-primary-foreground">$2,200</span>
+                          <span className="text-muted-foreground">
+                            Estimated Monthly Rent
+                          </span>
+                          <span className="text-primary-foreground">
+                            $2,200
+                          </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Other Income</span>
+                          <span className="text-muted-foreground">
+                            Other Income
+                          </span>
                           <span className="text-primary-foreground">$0</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Vacancy Loss (5%)</span>
+                          <span className="text-muted-foreground">
+                            Vacancy Loss (5%)
+                          </span>
                           <span className="text-red-500">-$110</span>
                         </div>
                         <div className="border-t border-border my-2"></div>
                         <div className="flex justify-between font-medium">
-                          <span className="text-primary-foreground">Effective Income</span>
-                          <span className="text-primary-foreground">$2,090</span>
+                          <span className="text-primary-foreground">
+                            Effective Income
+                          </span>
+                          <span className="text-primary-foreground">
+                            $2,090
+                          </span>
                         </div>
                       </div>
                     </div>
 
                     <div>
-                      <h3 className="text-lg font-medium text-primary-foreground mb-2">Expenses</h3>
+                      <h3 className="text-lg font-medium text-primary-foreground mb-2">
+                        Expenses
+                      </h3>
                       <div className="space-y-2">
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Mortgage (5%, 30yr, 20% down)</span>
+                          <span className="text-muted-foreground">
+                            Mortgage (5%, 30yr, 20% down)
+                          </span>
                           <span className="text-red-500">-$1,370</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Property Tax</span>
+                          <span className="text-muted-foreground">
+                            Property Tax
+                          </span>
                           <span className="text-red-500">-$350</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Insurance</span>
+                          <span className="text-muted-foreground">
+                            Insurance
+                          </span>
                           <span className="text-red-500">-$120</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Maintenance</span>
+                          <span className="text-muted-foreground">
+                            Maintenance
+                          </span>
                           <span className="text-red-500">-$150</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Property Management</span>
+                          <span className="text-muted-foreground">
+                            Property Management
+                          </span>
                           <span className="text-red-500">-$176</span>
                         </div>
                         <div className="border-t border-border my-2"></div>
                         <div className="flex justify-between font-medium">
-                          <span className="text-primary-foreground">Total Expenses</span>
+                          <span className="text-primary-foreground">
+                            Total Expenses
+                          </span>
                           <span className="text-red-500">-$2,166</span>
                         </div>
                       </div>
@@ -662,35 +821,58 @@ function PropertyDetailsModal({ onClose }: { onClose: () => void }) {
 
                   <div className="p-4 rounded-lg border border-border bg-card/50">
                     <div className="flex justify-between items-center mb-2">
-                      <h3 className="font-medium text-primary-foreground">Monthly Cash Flow</h3>
-                      <span className="text-xl font-bold text-green-500">$450</span>
+                      <h3 className="font-medium text-primary-foreground">
+                        Monthly Cash Flow
+                      </h3>
+                      <span className="text-xl font-bold text-green-500">
+                        $450
+                      </span>
                     </div>
                     <Progress
                       value={65}
                       className="h-2 [&>div]:bg-gradient-to-r [&>div]:from-primary [&>div]:to-green-500"
                     />
                     <p className="text-xs text-muted-foreground mt-2">
-                      This property ranks in the top 35% for cash flow in this area
+                      This property ranks in the top 35% for cash flow in this
+                      area
                     </p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="p-4 rounded-lg border border-border bg-card/50">
-                      <h3 className="text-sm text-muted-foreground mb-1">Cap Rate</h3>
-                      <div className="text-xl font-bold text-primary-foreground">6.2%</div>
-                      <p className="text-xs text-muted-foreground mt-1">Market average: 5.8%</p>
+                      <h3 className="text-sm text-muted-foreground mb-1">
+                        Cap Rate
+                      </h3>
+                      <div className="text-xl font-bold text-primary-foreground">
+                        6.2%
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Market average: 5.8%
+                      </p>
                     </div>
 
                     <div className="p-4 rounded-lg border border-border bg-card/50">
-                      <h3 className="text-sm text-muted-foreground mb-1">Cash on Cash Return</h3>
-                      <div className="text-xl font-bold text-primary-foreground">8.5%</div>
-                      <p className="text-xs text-muted-foreground mt-1">Based on 20% down payment</p>
+                      <h3 className="text-sm text-muted-foreground mb-1">
+                        Cash on Cash Return
+                      </h3>
+                      <div className="text-xl font-bold text-primary-foreground">
+                        8.5%
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Based on 20% down payment
+                      </p>
                     </div>
 
                     <div className="p-4 rounded-lg border border-border bg-card/50">
-                      <h3 className="text-sm text-muted-foreground mb-1">Break-even Ratio</h3>
-                      <div className="text-xl font-bold text-primary-foreground">78%</div>
-                      <p className="text-xs text-muted-foreground mt-1">Lower is better (expenses/income)</p>
+                      <h3 className="text-sm text-muted-foreground mb-1">
+                        Break-even Ratio
+                      </h3>
+                      <div className="text-xl font-bold text-primary-foreground">
+                        78%
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Lower is better (expenses/income)
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -700,44 +882,66 @@ function PropertyDetailsModal({ onClose }: { onClose: () => void }) {
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <h3 className="text-lg font-medium text-primary-foreground mb-2">Market Trends</h3>
+                      <h3 className="text-lg font-medium text-primary-foreground mb-2">
+                        Market Trends
+                      </h3>
                       <div className="h-40 rounded-lg border border-border bg-card/50 flex items-center justify-center">
                         <BarChart2 className="h-8 w-8 text-muted-foreground" />
-                        <span className="ml-2 text-muted-foreground">Price Trend Chart</span>
+                        <span className="ml-2 text-muted-foreground">
+                          Price Trend Chart
+                        </span>
                       </div>
                       <div className="mt-2 space-y-2">
                         <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">1-Year Appreciation</span>
+                          <span className="text-muted-foreground">
+                            1-Year Appreciation
+                          </span>
                           <span className="text-green-500">+8.2%</span>
                         </div>
                         <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">5-Year Forecast</span>
+                          <span className="text-muted-foreground">
+                            5-Year Forecast
+                          </span>
                           <span className="text-green-500">+24.5%</span>
                         </div>
                         <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Median Days on Market</span>
-                          <span className="text-primary-foreground">18 days</span>
+                          <span className="text-muted-foreground">
+                            Median Days on Market
+                          </span>
+                          <span className="text-primary-foreground">
+                            18 days
+                          </span>
                         </div>
                       </div>
                     </div>
 
                     <div>
-                      <h3 className="text-lg font-medium text-primary-foreground mb-2">Rental Market</h3>
+                      <h3 className="text-lg font-medium text-primary-foreground mb-2">
+                        Rental Market
+                      </h3>
                       <div className="h-40 rounded-lg border border-border bg-card/50 flex items-center justify-center">
                         <BarChart2 className="h-8 w-8 text-muted-foreground" />
-                        <span className="ml-2 text-muted-foreground">Rent Trend Chart</span>
+                        <span className="ml-2 text-muted-foreground">
+                          Rent Trend Chart
+                        </span>
                       </div>
                       <div className="mt-2 space-y-2">
                         <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">1-Year Rent Growth</span>
+                          <span className="text-muted-foreground">
+                            1-Year Rent Growth
+                          </span>
                           <span className="text-green-500">+5.3%</span>
                         </div>
                         <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Vacancy Rate</span>
+                          <span className="text-muted-foreground">
+                            Vacancy Rate
+                          </span>
                           <span className="text-primary-foreground">3.2%</span>
                         </div>
                         <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Rent-to-Price Ratio</span>
+                          <span className="text-muted-foreground">
+                            Rent-to-Price Ratio
+                          </span>
                           <span className="text-primary-foreground">0.62%</span>
                         </div>
                       </div>
@@ -745,19 +949,23 @@ function PropertyDetailsModal({ onClose }: { onClose: () => void }) {
                   </div>
 
                   <div>
-                    <h3 className="text-lg font-medium text-primary-foreground mb-2">Comparable Properties</h3>
+                    <h3 className="text-lg font-medium text-primary-foreground mb-2">
+                      Comparable Properties
+                    </h3>
                     <div className="space-y-3">
                       <div className="flex items-center justify-between p-3 rounded-lg border border-border bg-card/50">
                         <div className="flex items-center gap-3">
                           <div className="w-12 h-12 rounded-lg overflow-hidden">
                             <img
-                              src="/placeholder.svg?height=50&width=50"
+                              src="/house-placeholder.svg"
                               alt="Comparable property"
                               className="w-full h-full object-cover"
                             />
                           </div>
                           <div>
-                            <h4 className="font-medium text-primary-foreground">456 Oak St</h4>
+                            <h4 className="font-medium text-primary-foreground">
+                              456 Oak St
+                            </h4>
                             <div className="flex items-center text-xs text-muted-foreground">
                               <span>$430,000</span>
                               <span className="mx-2">•</span>
@@ -774,13 +982,15 @@ function PropertyDetailsModal({ onClose }: { onClose: () => void }) {
                         <div className="flex items-center gap-3">
                           <div className="w-12 h-12 rounded-lg overflow-hidden">
                             <img
-                              src="/placeholder.svg?height=50&width=50"
+                              src="/house-placeholder.svg"
                               alt="Comparable property"
                               className="w-full h-full object-cover"
                             />
                           </div>
                           <div>
-                            <h4 className="font-medium text-primary-foreground">789 Elm St</h4>
+                            <h4 className="font-medium text-primary-foreground">
+                              789 Elm St
+                            </h4>
                             <div className="flex items-center text-xs text-muted-foreground">
                               <span>$415,000</span>
                               <span className="mx-2">•</span>
@@ -797,13 +1007,15 @@ function PropertyDetailsModal({ onClose }: { onClose: () => void }) {
                         <div className="flex items-center gap-3">
                           <div className="w-12 h-12 rounded-lg overflow-hidden">
                             <img
-                              src="/placeholder.svg?height=50&width=50"
+                              src="/house-placeholder.svg"
                               alt="Comparable property"
                               className="w-full h-full object-cover"
                             />
                           </div>
                           <div>
-                            <h4 className="font-medium text-primary-foreground">321 Pine St</h4>
+                            <h4 className="font-medium text-primary-foreground">
+                              321 Pine St
+                            </h4>
                             <div className="flex items-center text-xs text-muted-foreground">
                               <span>$440,000</span>
                               <span className="mx-2">•</span>
@@ -828,8 +1040,12 @@ function PropertyDetailsModal({ onClose }: { onClose: () => void }) {
                         <Sparkles className="h-5 w-5 text-primary" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-primary-foreground">AI Investment Analysis</h3>
-                        <p className="text-xs text-muted-foreground">Personalized insights for your investment goals</p>
+                        <h3 className="font-medium text-primary-foreground">
+                          AI Investment Analysis
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          Personalized insights for your investment goals
+                        </p>
                       </div>
                     </div>
 
@@ -840,8 +1056,9 @@ function PropertyDetailsModal({ onClose }: { onClose: () => void }) {
                         </div>
                         <div>
                           <p className="text-sm text-primary-foreground">
-                            This property offers strong cash flow potential with a projected return above the market
-                            average for Austin.
+                            This property offers strong cash flow potential with
+                            a projected return above the market average for
+                            Austin.
                           </p>
                         </div>
                       </div>
@@ -852,8 +1069,9 @@ function PropertyDetailsModal({ onClose }: { onClose: () => void }) {
                         </div>
                         <div>
                           <p className="text-sm text-primary-foreground">
-                            The neighborhood has shown consistent appreciation over the past 5 years, suggesting good
-                            long-term value growth.
+                            The neighborhood has shown consistent appreciation
+                            over the past 5 years, suggesting good long-term
+                            value growth.
                           </p>
                         </div>
                       </div>
@@ -864,7 +1082,8 @@ function PropertyDetailsModal({ onClose }: { onClose: () => void }) {
                         </div>
                         <div>
                           <p className="text-sm text-primary-foreground">
-                            Recent renovations reduce the likelihood of major maintenance expenses in the near term.
+                            Recent renovations reduce the likelihood of major
+                            maintenance expenses in the near term.
                           </p>
                         </div>
                       </div>
@@ -875,8 +1094,9 @@ function PropertyDetailsModal({ onClose }: { onClose: () => void }) {
                         </div>
                         <div>
                           <p className="text-sm text-primary-foreground">
-                            Property taxes in this area have increased by an average of 6% annually, which could impact
-                            future cash flow.
+                            Property taxes in this area have increased by an
+                            average of 6% annually, which could impact future
+                            cash flow.
                           </p>
                         </div>
                       </div>
@@ -885,62 +1105,102 @@ function PropertyDetailsModal({ onClose }: { onClose: () => void }) {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="p-4 rounded-lg border border-border bg-card/50">
-                      <h3 className="font-medium text-primary-foreground mb-2">Deal Score Breakdown</h3>
+                      <h3 className="font-medium text-primary-foreground mb-2">
+                        Deal Score Breakdown
+                      </h3>
                       <div className="space-y-3">
                         <div className="space-y-1">
                           <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Cash Flow</span>
-                            <span className="text-primary-foreground">90/100</span>
+                            <span className="text-muted-foreground">
+                              Cash Flow
+                            </span>
+                            <span className="text-primary-foreground">
+                              90/100
+                            </span>
                           </div>
-                          <Progress value={90} className="h-1.5 [&>div]:bg-primary" />
+                          <Progress
+                            value={90}
+                            className="h-1.5 [&>div]:bg-primary"
+                          />
                         </div>
 
                         <div className="space-y-1">
                           <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Appreciation Potential</span>
-                            <span className="text-primary-foreground">85/100</span>
+                            <span className="text-muted-foreground">
+                              Appreciation Potential
+                            </span>
+                            <span className="text-primary-foreground">
+                              85/100
+                            </span>
                           </div>
-                          <Progress value={85} className="h-1.5 [&>div]:bg-primary" />
+                          <Progress
+                            value={85}
+                            className="h-1.5 [&>div]:bg-primary"
+                          />
                         </div>
 
                         <div className="space-y-1">
                           <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Risk Level</span>
-                            <span className="text-primary-foreground">75/100</span>
+                            <span className="text-muted-foreground">
+                              Risk Level
+                            </span>
+                            <span className="text-primary-foreground">
+                              75/100
+                            </span>
                           </div>
-                          <Progress value={75} className="h-1.5 [&>div]:bg-primary" />
+                          <Progress
+                            value={75}
+                            className="h-1.5 [&>div]:bg-primary"
+                          />
                         </div>
 
                         <div className="space-y-1">
                           <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Overall Score</span>
-                            <span className="text-primary-foreground">85/100</span>
+                            <span className="text-muted-foreground">
+                              Overall Score
+                            </span>
+                            <span className="text-primary-foreground">
+                              85/100
+                            </span>
                           </div>
-                          <Progress value={85} className="h-1.5 [&>div]:bg-primary" />
+                          <Progress
+                            value={85}
+                            className="h-1.5 [&>div]:bg-primary"
+                          />
                         </div>
                       </div>
                     </div>
 
                     <div className="p-4 rounded-lg border border-border bg-card/50">
-                      <h3 className="font-medium text-primary-foreground mb-2">Investment Strategy Fit</h3>
+                      <h3 className="font-medium text-primary-foreground mb-2">
+                        Investment Strategy Fit
+                      </h3>
                       <div className="space-y-3">
                         <div className="flex justify-between items-center">
-                          <span className="text-muted-foreground">Buy and Hold</span>
+                          <span className="text-muted-foreground">
+                            Buy and Hold
+                          </span>
                           <Badge className="bg-green-500">Excellent</Badge>
                         </div>
 
                         <div className="flex justify-between items-center">
-                          <span className="text-muted-foreground">BRRRR Strategy</span>
+                          <span className="text-muted-foreground">
+                            BRRRR Strategy
+                          </span>
                           <Badge className="bg-amber-500">Good</Badge>
                         </div>
 
                         <div className="flex justify-between items-center">
-                          <span className="text-muted-foreground">Short-term Rental</span>
+                          <span className="text-muted-foreground">
+                            Short-term Rental
+                          </span>
                           <Badge className="bg-amber-500">Good</Badge>
                         </div>
 
                         <div className="flex justify-between items-center">
-                          <span className="text-muted-foreground">Fix and Flip</span>
+                          <span className="text-muted-foreground">
+                            Fix and Flip
+                          </span>
                           <Badge variant="outline">Fair</Badge>
                         </div>
                       </div>
@@ -969,5 +1229,5 @@ function PropertyDetailsModal({ onClose }: { onClose: () => void }) {
         </div>
       </motion.div>
     </motion.div>
-  )
+  );
 }
