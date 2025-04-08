@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 180 100% 50%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 160 100% 15%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+
+    --accent: 12 6.5% 15.1%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 180 100% 50%;
+
+    --radius: 0.5rem;
+
+    --chart-1: 180 100% 50%;
+    --chart-2: 160 100% 30%;
+    --chart-3: 51 100% 42%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    background-image: radial-gradient(circle at center, rgba(0, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0) 70%);
+  }
+}
+
+@layer utilities {
+  .glow-text {
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  }
+
+  .glow-icon {
+    filter: drop-shadow(0 0 5px rgba(0, 255, 255, 0.5));
+  }
+
+  /* More specific selector for solid primary buttons only */
+  .btn-primary,
+  button.bg-primary:not([class*="bg-primary/10"]):not([class*="bg-primary/5"]) {
+    @apply text-black;
+  }
+
+  /* Override for icons inside solid primary buttons */
+  button.bg-primary:not([class*="bg-primary/10"]):not([class*="bg-primary/5"]) svg {
+    @apply text-black;
+  }
+
+  /* Ensure tab buttons have white text */
+  button[class*="bg-primary/10"],
+  button[class*="bg-primary/5"] {
+    @apply text-white;
+  }
+}
