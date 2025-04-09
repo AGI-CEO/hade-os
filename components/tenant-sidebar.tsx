@@ -16,6 +16,7 @@ import {
   CreditCard,
   ChevronLeft,
   ChevronRight,
+  LogOut,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -148,7 +149,7 @@ export function TenantSidebar() {
   return (
     <aside
       data-collapsed={isCollapsed}
-      className="group relative flex flex-col h-full bg-card border-r border-border data-[collapsed=true]:w-16 w-56 transition-all duration-300 ease-in-out"
+      className="group relative flex flex-col h-screen bg-card border-r border-border data-[collapsed=true]:w-16 w-56 transition-all duration-300 ease-in-out"
     >
       <div className="flex h-16 items-center justify-between px-4 border-b border-border">
         <motion.div
@@ -193,7 +194,7 @@ export function TenantSidebar() {
       <ScrollArea className="flex-1">
         <Nav links={links} isCollapsed={isCollapsed} />
       </ScrollArea>
-      <div className="h-16 border-t border-border p-2">
+      <div className="sticky bottom-0 mt-auto h-16 border-t border-border p-2 bg-card">
         <TenantButton isCollapsed={isCollapsed} />
       </div>
     </aside>
@@ -203,18 +204,35 @@ export function TenantSidebar() {
 function TenantButton({ isCollapsed }: { isCollapsed: boolean }) {
   const { data: session } = useSession();
 
+  const handleLogout = () => {
+    signOut({ callbackUrl: "/login" });
+  };
+
   return (
-    <div className="flex items-center gap-2 p-2">
-      <div className="h-8 w-8 rounded-full overflow-hidden bg-primary/10 flex items-center justify-center">
-        {session?.user?.name?.charAt(0) || "T"}
+    <div className="flex items-center justify-between p-2">
+      <div className="flex items-center gap-2">
+        <div className="h-8 w-8 rounded-full overflow-hidden bg-primary/10 flex items-center justify-center">
+          {session?.user?.name?.charAt(0) || "T"}
+        </div>
+        {!isCollapsed && (
+          <div className="flex flex-col">
+            <span className="text-sm font-medium">
+              {session?.user?.name || "Tenant"}
+            </span>
+            <span className="text-xs text-muted-foreground">Tenant</span>
+          </div>
+        )}
       </div>
       {!isCollapsed && (
-        <div className="flex flex-col">
-          <span className="text-sm font-medium">
-            {session?.user?.name || "Tenant"}
-          </span>
-          <span className="text-xs text-muted-foreground">Tenant</span>
-        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleLogout}
+          className="h-8 w-8"
+        >
+          <LogOut className="h-4 w-4" />
+          <span className="sr-only">Logout</span>
+        </Button>
       )}
     </div>
   );

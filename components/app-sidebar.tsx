@@ -188,7 +188,7 @@ export function AppSidebar() {
   return (
     <aside
       data-collapsed={isCollapsed}
-      className="group relative flex flex-col h-full bg-card border-r border-border data-[collapsed=true]:w-16 w-56 transition-all duration-300 ease-in-out"
+      className="group relative flex flex-col h-screen bg-card border-r border-border data-[collapsed=true]:w-16 w-56 transition-all duration-300 ease-in-out"
     >
       <div className="flex h-16 items-center justify-between px-4 border-b border-border">
         <motion.div
@@ -233,7 +233,7 @@ export function AppSidebar() {
       <ScrollArea className="flex-1">
         <Nav links={links} isCollapsed={isCollapsed} />
       </ScrollArea>
-      <div className="h-16 border-t border-border p-2">
+      <div className="sticky bottom-0 mt-auto h-16 border-t border-border p-2 bg-card">
         <UserButton isCollapsed={isCollapsed} />
       </div>
     </aside>
