@@ -55,7 +55,7 @@ You can clone this repo and deploy to Vercel in one easy step. Just add your own
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/hade-os.git
+   git clone https://github.com/AGI-CEO/hade-os.git
    cd hade-os
    ```
 
