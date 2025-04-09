@@ -8,7 +8,7 @@ export const AUTH_COOKIE = "hade_auth_token";
 // Function to get the current user from the session
 export async function getCurrentUser() {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const token = cookieStore.get(AUTH_COOKIE)?.value;
     console.log("Auth token in getCurrentUser:", token);
 

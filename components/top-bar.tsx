@@ -23,12 +23,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { useAuth } from "@/contexts/auth-context";
+import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 
 export function TopBar() {
   const [searchFocused, setSearchFocused] = useState(false);
-  const { user, logout } = useAuth();
+  const { data: session } = useSession();
 
   return (
     <div className="border-b border-border p-4 flex items-center justify-between">
@@ -74,17 +74,17 @@ export function TopBar() {
                   <div className="flex items-start gap-3">
                     <Avatar className="h-8 w-8">
                       <AvatarFallback>
-                        {user?.name?.charAt(0) || "U"}
+                        {session?.user?.name?.charAt(0) || "U"}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 space-y-1">
                       <p className="text-sm font-medium leading-none">
-                        {user?.userType === "landlord"
+                        {session?.user?.userType === "landlord"
                           ? "New maintenance request"
                           : "Maintenance update"}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {user?.userType === "landlord"
+                        {session?.user?.userType === "landlord"
                           ? "A tenant submitted a new maintenance request"
                           : "Your maintenance request has been updated"}
                       </p>
@@ -108,7 +108,9 @@ export function TopBar() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Avatar className="h-8 w-8 cursor-pointer">
-              <AvatarFallback>{user?.name?.charAt(0) || "U"}</AvatarFallback>
+              <AvatarFallback>
+                {session?.user?.name?.charAt(0) || "U"}
+              </AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -116,14 +118,16 @@ export function TopBar() {
             className="w-56 bg-card border-border"
           >
             <DropdownMenuLabel>
-              {user?.name ||
-                (user?.userType === "landlord" ? "Landlord" : "Tenant")}
+              {session?.user?.name ||
+                (session?.user?.userType === "landlord"
+                  ? "Landlord"
+                  : "Tenant")}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
 
             <DropdownMenuItem asChild>
               <Link
-                href={user?.userType === "landlord" ? "/" : "/connect"}
+                href={session?.user?.userType === "landlord" ? "/" : "/connect"}
                 className="cursor-pointer"
               >
                 <Home className="mr-2 h-4 w-4" />
@@ -134,7 +138,7 @@ export function TopBar() {
             <DropdownMenuItem asChild>
               <Link
                 href={
-                  user?.userType === "landlord"
+                  session?.user?.userType === "landlord"
                     ? "/profile"
                     : "/connect/settings"
                 }
@@ -148,7 +152,7 @@ export function TopBar() {
             <DropdownMenuSeparator />
 
             <DropdownMenuItem
-              onClick={() => logout()}
+              onClick={() => signOut({ callbackUrl: "/login" })}
               className="cursor-pointer text-red-500"
             >
               <LogOut className="mr-2 h-4 w-4" />

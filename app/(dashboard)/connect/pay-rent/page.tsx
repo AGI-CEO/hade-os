@@ -1,60 +1,66 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import { useAuth } from "@/contexts/auth-context"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { CreditCard, Calendar, DollarSign, CheckCircle } from "lucide-react"
-import { useToast } from "@/components/ui/use-toast"
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { useSession } from "next-auth/react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { CreditCard, Calendar, DollarSign, CheckCircle } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function PayRentPage() {
-  const { user } = useAuth()
-  const [tenantData, setTenantData] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const [paymentMethod, setPaymentMethod] = useState("credit-card")
-  const [showConfirmation, setShowConfirmation] = useState(false)
-  const { toast } = useToast()
-  
+  const { data: session } = useSession();
+  const [tenantData, setTenantData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [paymentMethod, setPaymentMethod] = useState("credit-card");
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const { toast } = useToast();
+
   useEffect(() => {
     const fetchTenantData = async () => {
       try {
-        setLoading(true)
-        const response = await fetch("/api/tenants/me")
-        
+        setLoading(true);
+        const response = await fetch("/api/tenants/me");
+
         if (!response.ok) {
-          throw new Error("Failed to fetch tenant data")
+          throw new Error("Failed to fetch tenant data");
         }
-        
-        const data = await response.json()
-        setTenantData(data)
+
+        const data = await response.json();
+        setTenantData(data);
       } catch (error) {
-        console.error("Error fetching tenant data:", error)
+        console.error("Error fetching tenant data:", error);
         toast({
           title: "Error",
           description: "Failed to load your tenant information",
           variant: "destructive",
-        })
+        });
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
-    
-    fetchTenantData()
-  }, [toast])
-  
+    };
+
+    fetchTenantData();
+  }, [toast]);
+
   const handlePayment = () => {
     // In a real app, this would process the payment
     toast({
       title: "Payment Successful",
       description: "Your rent payment has been processed.",
-    })
-    setShowConfirmation(true)
-  }
-  
+    });
+    setShowConfirmation(true);
+  };
+
   if (showConfirmation) {
     return (
       <div className="space-y-6">
@@ -66,33 +72,41 @@ export default function PayRentPage() {
             Your rent payment has been successfully processed
           </p>
         </div>
-        
+
         <Card className="bg-card border-border">
           <CardContent className="pt-6 flex flex-col items-center text-center">
             <div className="mb-4 h-16 w-16 rounded-full bg-green-500/20 flex items-center justify-center">
               <CheckCircle className="h-8 w-8 text-green-500" />
             </div>
-            <h2 className="text-2xl font-bold text-primary-foreground mb-2">Payment Successful</h2>
+            <h2 className="text-2xl font-bold text-primary-foreground mb-2">
+              Payment Successful
+            </h2>
             <p className="text-muted-foreground mb-6">
               Thank you for your payment. A receipt has been sent to your email.
             </p>
             <div className="grid grid-cols-2 gap-4 w-full max-w-md mb-6">
               <div className="p-4 rounded-lg bg-muted/50 border border-border">
                 <p className="text-sm text-muted-foreground">Amount Paid</p>
-                <p className="text-xl font-bold text-primary-foreground">${tenantData?.rentAmount || "0.00"}</p>
+                <p className="text-xl font-bold text-primary-foreground">
+                  ${tenantData?.rentAmount || "0.00"}
+                </p>
               </div>
               <div className="p-4 rounded-lg bg-muted/50 border border-border">
                 <p className="text-sm text-muted-foreground">Payment Date</p>
-                <p className="text-xl font-bold text-primary-foreground">{new Date().toLocaleDateString()}</p>
+                <p className="text-xl font-bold text-primary-foreground">
+                  {new Date().toLocaleDateString()}
+                </p>
               </div>
             </div>
-            <Button onClick={() => setShowConfirmation(false)}>Return to Payment Page</Button>
+            <Button onClick={() => setShowConfirmation(false)}>
+              Return to Payment Page
+            </Button>
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
-  
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col space-y-2">
@@ -103,13 +117,17 @@ export default function PayRentPage() {
           Make your monthly rent payment securely online
         </p>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2">
           <Card className="bg-card border-border">
             <CardHeader>
-              <CardTitle className="text-primary-foreground">Payment Details</CardTitle>
-              <CardDescription>Choose your payment method and enter your details</CardDescription>
+              <CardTitle className="text-primary-foreground">
+                Payment Details
+              </CardTitle>
+              <CardDescription>
+                Choose your payment method and enter your details
+              </CardDescription>
             </CardHeader>
             <CardContent>
               {loading ? (
@@ -150,7 +168,9 @@ export default function PayRentPage() {
                         className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-card p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
                       >
                         <DollarSign className="mb-3 h-6 w-6" />
-                        <span className="text-sm font-medium">Bank Transfer</span>
+                        <span className="text-sm font-medium">
+                          Bank Transfer
+                        </span>
                       </Label>
                     </div>
                     <div>
@@ -168,13 +188,16 @@ export default function PayRentPage() {
                       </Label>
                     </div>
                   </RadioGroup>
-                  
+
                   {paymentMethod === "credit-card" && (
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="card-number">Card Number</Label>
-                          <Input id="card-number" placeholder="1234 5678 9012 3456" />
+                          <Input
+                            id="card-number"
+                            placeholder="1234 5678 9012 3456"
+                          />
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="card-name">Name on Card</Label>
@@ -193,7 +216,7 @@ export default function PayRentPage() {
                       </div>
                     </div>
                   )}
-                  
+
                   {paymentMethod === "bank-transfer" && (
                     <div className="space-y-4">
                       <div className="space-y-2">
@@ -212,7 +235,7 @@ export default function PayRentPage() {
                       </div>
                     </div>
                   )}
-                  
+
                   {paymentMethod === "scheduled" && (
                     <div className="space-y-4">
                       <div className="space-y-2">
@@ -231,7 +254,7 @@ export default function PayRentPage() {
                       </div>
                     </div>
                   )}
-                  
+
                   <Button onClick={handlePayment} className="w-full">
                     Pay ${tenantData?.rentAmount || "0.00"}
                   </Button>
@@ -240,11 +263,13 @@ export default function PayRentPage() {
             </CardContent>
           </Card>
         </div>
-        
+
         <div>
           <Card className="bg-card border-border">
             <CardHeader>
-              <CardTitle className="text-primary-foreground">Payment Summary</CardTitle>
+              <CardTitle className="text-primary-foreground">
+                Payment Summary
+              </CardTitle>
               <CardDescription>Details of your rent payment</CardDescription>
             </CardHeader>
             <CardContent>
@@ -258,31 +283,44 @@ export default function PayRentPage() {
                 <div className="space-y-4">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Monthly Rent</span>
-                    <span className="font-medium">${tenantData?.rentAmount || "0.00"}</span>
+                    <span className="font-medium">
+                      ${tenantData?.rentAmount || "0.00"}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Due Date</span>
                     <span className="font-medium">
-                      {tenantData?.rentDue ? new Date(tenantData.rentDue).toLocaleDateString() : "N/A"}
+                      {tenantData?.rentDue
+                        ? new Date(tenantData.rentDue).toLocaleDateString()
+                        : "N/A"}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Property</span>
                     <span className="font-medium">
-                      {tenantData?.property?.address ? `${tenantData.property.address.split(' ')[0]}...` : "N/A"}
+                      {tenantData?.property?.address
+                        ? `${tenantData.property.address.split(" ")[0]}...`
+                        : "N/A"}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Payment Method</span>
+                    <span className="text-muted-foreground">
+                      Payment Method
+                    </span>
                     <span className="font-medium">
-                      {paymentMethod === "credit-card" ? "Credit Card" : 
-                       paymentMethod === "bank-transfer" ? "Bank Transfer" : "Scheduled"}
+                      {paymentMethod === "credit-card"
+                        ? "Credit Card"
+                        : paymentMethod === "bank-transfer"
+                        ? "Bank Transfer"
+                        : "Scheduled"}
                     </span>
                   </div>
                   <div className="pt-4 border-t border-border">
                     <div className="flex justify-between text-lg font-bold">
                       <span>Total</span>
-                      <span className="text-primary">${tenantData?.rentAmount || "0.00"}</span>
+                      <span className="text-primary">
+                        ${tenantData?.rentAmount || "0.00"}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -292,5 +330,5 @@ export default function PayRentPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

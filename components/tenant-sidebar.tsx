@@ -1,10 +1,11 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { usePathname } from "next/navigation"
-import { motion } from "framer-motion"
+import * as React from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
+import { motion } from "framer-motion";
 import {
   Home,
   Wrench,
@@ -15,29 +16,31 @@ import {
   CreditCard,
   ChevronLeft,
   ChevronRight,
-} from "lucide-react"
+} from "lucide-react";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { useAuth } from "@/contexts/auth-context"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface NavProps {
-  isCollapsed: boolean
+  isCollapsed: boolean;
   links: {
-    title: string
-    label?: string
-    icon: React.ReactNode
-    variant: "default" | "ghost"
-    href: string
-  }[]
+    title: string;
+    label?: string;
+    icon: React.ReactNode;
+    variant: "default" | "ghost";
+    href: string;
+  }[];
 }
 
 export function Nav({ links, isCollapsed }: NavProps) {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
-    <div data-collapsed={isCollapsed} className="group flex flex-col gap-4 py-2 data-[collapsed=true]:py-2">
+    <div
+      data-collapsed={isCollapsed}
+      className="group flex flex-col gap-4 py-2 data-[collapsed=true]:py-2"
+    >
       <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
         {links.map((link, index) =>
           isCollapsed ? (
@@ -48,7 +51,7 @@ export function Nav({ links, isCollapsed }: NavProps) {
               className={cn(
                 "h-9 w-9",
                 link.variant === "default" &&
-                  "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white",
+                  "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
               )}
               asChild
             >
@@ -64,29 +67,32 @@ export function Nav({ links, isCollapsed }: NavProps) {
               size="sm"
               className={cn(
                 "justify-start",
-                link.variant === "default" && "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white",
+                link.variant === "default" &&
+                  "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white"
               )}
               asChild
             >
               <Link href={link.href} className="flex items-center gap-2">
                 {link.icon}
                 <span>{link.title}</span>
-                {link.label && <span className="ml-auto text-xs">{link.label}</span>}
+                {link.label && (
+                  <span className="ml-auto text-xs">{link.label}</span>
+                )}
               </Link>
             </Button>
-          ),
+          )
         )}
       </nav>
     </div>
-  )
+  );
 }
 
 export function TenantSidebar() {
-  const [isCollapsed, setIsCollapsed] = React.useState(false)
-  const pathname = usePathname()
-  const { user } = useAuth()
+  const [isCollapsed, setIsCollapsed] = React.useState(false);
+  const pathname = usePathname();
+  const { data: session } = useSession();
 
-  const iconClasses = "h-4 w-4"
+  const iconClasses = "h-4 w-4";
   const links = [
     {
       title: "Home",
@@ -137,7 +143,7 @@ export function TenantSidebar() {
       variant: pathname === "/connect/settings" ? "default" : "ghost",
       href: "/connect/settings",
     },
-  ]
+  ];
 
   return (
     <aside
@@ -152,7 +158,12 @@ export function TenantSidebar() {
           className="flex items-center gap-2"
         >
           <div className="h-8 w-8 relative">
-            <Image src="/images/hade-logo.png" alt="HADE Logo" fill className="object-contain" />
+            <Image
+              src="/images/hade-logo.png"
+              alt="HADE Logo"
+              fill
+              className="object-contain"
+            />
           </div>
           {!isCollapsed && (
             <motion.span
@@ -165,8 +176,17 @@ export function TenantSidebar() {
             </motion.span>
           )}
         </motion.div>
-        <Button variant="ghost" size="icon" onClick={() => setIsCollapsed(!isCollapsed)} className="h-8 w-8">
-          {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="h-8 w-8"
+        >
+          {isCollapsed ? (
+            <ChevronRight className="h-4 w-4" />
+          ) : (
+            <ChevronLeft className="h-4 w-4" />
+          )}
           <span className="sr-only">Toggle Sidebar</span>
         </Button>
       </div>
@@ -177,23 +197,25 @@ export function TenantSidebar() {
         <TenantButton isCollapsed={isCollapsed} />
       </div>
     </aside>
-  )
+  );
 }
 
 function TenantButton({ isCollapsed }: { isCollapsed: boolean }) {
-  const { user } = useAuth()
-  
+  const { data: session } = useSession();
+
   return (
     <div className="flex items-center gap-2 p-2">
       <div className="h-8 w-8 rounded-full overflow-hidden bg-primary/10 flex items-center justify-center">
-        {user?.name?.charAt(0) || "T"}
+        {session?.user?.name?.charAt(0) || "T"}
       </div>
       {!isCollapsed && (
         <div className="flex flex-col">
-          <span className="text-sm font-medium">{user?.name || "Tenant"}</span>
+          <span className="text-sm font-medium">
+            {session?.user?.name || "Tenant"}
+          </span>
           <span className="text-xs text-muted-foreground">Tenant</span>
         </div>
       )}
     </div>
-  )
+  );
 }

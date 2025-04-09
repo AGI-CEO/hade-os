@@ -1,91 +1,103 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { AUTH_COOKIE, isProtectedRoute, isRestrictedRoute } from "@/lib/auth";
+import { getToken } from "next-auth/jwt";
+
+// Define route protection rules
+function isProtectedRoute(pathname: string) {
+  // Public routes that don't require authentication
+  const publicRoutes = ["/login", "/signup", "/forgot-password"];
+
+  // API routes that don't require authentication
+  if (pathname.startsWith("/api/auth/") || pathname.startsWith("/api/test")) {
+    return false;
+  }
+
+  // Check if the current route is public
+  return !publicRoutes.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`)
+  );
+}
+
+// Define route restrictions based on user type
+function isRestrictedRoute(pathname: string, userType: string) {
+  // Routes that are only accessible to landlords
+  const landlordRoutes = [
+    "/",
+    "/portfolio",
+    "/finances",
+    "/reports",
+    "/quests",
+    "/prospecting",
+    "/ai-tools",
+  ];
+
+  // Routes that are only accessible to tenants
+  const tenantRoutes = [
+    "/connect",
+    "/connect/maintenance",
+    "/connect/documents",
+    "/connect/lease",
+    "/connect/insurance",
+    "/connect/settings",
+  ];
+
+  if (userType === "landlord") {
+    return tenantRoutes.some(
+      (route) => pathname === route || pathname.startsWith(`${route}/`)
+    );
+  }
+
+  if (userType === "tenant") {
+    return landlordRoutes.some(
+      (route) => pathname === route || pathname.startsWith(`${route}/`)
+    );
+  }
+
+  return false;
+}
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  console.log("Middleware running for path:", pathname);
+  console.log("NextAuth Middleware running for path:", pathname);
 
-  // Get the authentication token from the cookies
-  const authToken = request.cookies.get(AUTH_COOKIE)?.value;
-  console.log("Auth token:", authToken);
+  // Get the token from NextAuth.js
+  const token = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
+
+  console.log("NextAuth token exists:", !!token);
 
   // Check if the route requires authentication
   if (isProtectedRoute(pathname)) {
-    // If there's no auth token, redirect to login
-    if (!authToken) {
+    // If there's no token, redirect to login
+    if (!token) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(loginUrl);
     }
 
-    // If there is an auth token, fetch the user to check their type
-    try {
-      // In a real app, you would verify the token
-      // For simplicity, we're using the token as the user ID
-      const apiUrl = `${
-        process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001"
-      }/api/auth/me`;
-      console.log("Fetching user from:", apiUrl);
-      const response = await fetch(apiUrl, {
-        headers: {
-          Cookie: `${AUTH_COOKIE}=${authToken}`,
-        },
-      });
-      console.log("Response status:", response.status);
-
-      if (!response.ok) {
-        // If the token is invalid, redirect to login
-        const loginUrl = new URL("/login", request.url);
-        return NextResponse.redirect(loginUrl);
+    // Check if the user is trying to access a restricted route
+    if (
+      token.userType &&
+      isRestrictedRoute(pathname, token.userType as string)
+    ) {
+      // Redirect to the appropriate dashboard based on user type
+      if (token.userType === "landlord") {
+        return NextResponse.redirect(new URL("/", request.url));
+      } else {
+        return NextResponse.redirect(new URL("/connect", request.url));
       }
-
-      const user = await response.json();
-
-      // Check if the user is trying to access a restricted route
-      if (isRestrictedRoute(pathname, user.userType)) {
-        // Redirect to the appropriate dashboard based on user type
-        if (user.userType === "landlord") {
-          return NextResponse.redirect(new URL("/", request.url));
-        } else {
-          return NextResponse.redirect(new URL("/connect", request.url));
-        }
-      }
-    } catch (error) {
-      console.error("Middleware error:", error);
-      // If there's an error, redirect to login
-      const loginUrl = new URL("/login", request.url);
-      return NextResponse.redirect(loginUrl);
     }
   }
 
   // If the user is already logged in and trying to access login page, redirect to appropriate dashboard
-  if (pathname === "/login" && authToken) {
-    try {
-      const response = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
-        }/api/auth/me`,
-        {
-          headers: {
-            Cookie: `${AUTH_COOKIE}=${authToken}`,
-          },
-        }
-      );
-
-      if (response.ok) {
-        const user = await response.json();
-
-        if (user.userType === "landlord") {
-          return NextResponse.redirect(new URL("/", request.url));
-        } else {
-          return NextResponse.redirect(new URL("/connect", request.url));
-        }
-      }
-    } catch (error) {
-      console.error("Middleware error:", error);
-      // If there's an error, continue to the login page
+  if (pathname === "/login" && token) {
+    if (token.userType === "landlord") {
+      return NextResponse.redirect(new URL("/", request.url));
+    } else {
+      return NextResponse.redirect(new URL("/connect", request.url));
     }
   }
 
@@ -101,7 +113,8 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - images (public images)
+     * - api/auth (NextAuth.js API routes)
      */
-    "/((?!_next/static|_next/image|favicon.ico|images).*)",
+    "/((?!_next/static|_next/image|favicon.ico|images|api/auth).*)",
   ],
 };

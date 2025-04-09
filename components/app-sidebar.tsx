@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard,
@@ -25,7 +26,6 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useAuth } from "@/contexts/auth-context";
 
 interface NavProps {
   isCollapsed: boolean;
@@ -95,11 +95,11 @@ export function Nav({ links, isCollapsed }: NavProps) {
 export function AppSidebar() {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const pathname = usePathname();
-  const { user, logout } = useAuth();
+  const { data: session } = useSession();
 
   // Only hide the sidebar for tenant users
   // For now, we'll show it for everyone else (including when user is null)
-  if (user?.userType === "tenant") {
+  if (session?.user?.userType === "tenant") {
     return null;
   }
 
@@ -240,22 +240,22 @@ export function AppSidebar() {
 }
 
 function UserButton({ isCollapsed }: { isCollapsed: boolean }) {
-  const { user, logout } = useAuth();
+  const { data: session } = useSession();
 
   const handleLogout = () => {
-    logout();
+    signOut({ callbackUrl: "/login" });
   };
 
   return (
     <div className="flex items-center justify-between p-2">
       <div className="flex items-center gap-2">
         <div className="h-8 w-8 rounded-full overflow-hidden bg-primary/10 flex items-center justify-center">
-          {user?.name?.charAt(0) || "L"}
+          {session?.user?.name?.charAt(0) || "L"}
         </div>
         {!isCollapsed && (
           <div className="flex flex-col">
             <span className="text-sm font-medium">
-              {user?.name || "Landlord"}
+              {session?.user?.name || "Landlord"}
             </span>
             <span className="text-xs text-muted-foreground">Landlord</span>
           </div>

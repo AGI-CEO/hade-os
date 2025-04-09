@@ -2,7 +2,7 @@ import type React from "react";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ToastProvider } from "@/components/toast-provider";
-import { AuthProvider } from "@/contexts/auth-context";
+import { NextAuthProvider } from "@/contexts/session-provider";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -29,10 +29,10 @@ export default function RootLayout({
           defaultTheme="dark"
           enableSystem={false}
         >
-          <AuthProvider>
+          <NextAuthProvider>
             <ToastProvider />
             {children}
-          </AuthProvider>
+          </NextAuthProvider>
         </ThemeProvider>
       </body>
     </html>

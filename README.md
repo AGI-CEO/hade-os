@@ -23,6 +23,7 @@ HADE (Housing Agent Does Everything) transforms property management into an enga
 - **Financial Tracking**: Monitor rental income, expenses, and property value changes
 - **Document Management**: Store and organize important property documents
 - **Maintenance Requests**: Streamlined system for handling tenant maintenance issues
+- **User Authentication**: Secure login system with role-based access (landlord/tenant) using NextAuth.js
 
 ## 🚀 Quick Deploy
 
@@ -33,6 +34,8 @@ You can clone this repo and deploy to Vercel in a few easy steps:
 3. Deploy to Vercel and configure the following environment variables:
    - `DATABASE_URL`: Your Supabase connection string
    - `DIRECT_URL`: Same as DATABASE_URL for direct database access
+   - `NEXTAUTH_URL`: Your application URL (e.g., https://yourdomain.com)
+   - `NEXTAUTH_SECRET`: A secure random string for JWT encryption
 
 The deployment will automatically run `prisma generate` during the build process to ensure the Prisma client is properly generated.
 
@@ -42,6 +45,7 @@ The deployment will automatically run `prisma generate` during the build process
 - TypeScript
 - Prisma ORM
 - Supabase (PostgreSQL)
+- NextAuth.js for authentication
 - Tailwind CSS
 - Bun package manager
 
@@ -72,6 +76,9 @@ The deployment will automatically run `prisma generate` during the build process
 
    - Copy `.env.example` to `.env`
    - Update with your Supabase credentials
+   - Configure NextAuth.js by setting:
+     - `NEXTAUTH_URL=http://localhost:3000`
+     - `NEXTAUTH_SECRET=your-secure-random-string`
 
 4. Set up the database:
 
@@ -81,7 +88,18 @@ The deployment will automatically run `prisma generate` during the build process
      bun run prisma:migrate
      ```
 
-5. Start the development server:
+5. Create test users (optional):
+
+   ```bash
+   bun run db:create-test-users
+   ```
+
+   This will create two test accounts:
+
+   - Landlord: `landlord@example.com` / `password123`
+   - Tenant: `tenant@example.com` / `password123`
+
+6. Start the development server:
    ```bash
    bun run dev
    ```
