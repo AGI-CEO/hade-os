@@ -27,7 +27,7 @@ Follow the instructions in `README-PRISMA-SETUP.md` to set up your Supabase data
 3. Import your GitHub repository
 4. Configure the project:
    - Framework Preset: Next.js
-   - Build Command: Will be automatically set to `prisma generate && next build` (from vercel.json)
+   - Build Command: Will be automatically set to `prisma generate && node scripts/init-landlord-from-env.js && next build` (from vercel.json)
    - Output Directory: Leave as default (.next)
 
 ### 4. Configure Environment Variables
@@ -35,16 +35,28 @@ Follow the instructions in `README-PRISMA-SETUP.md` to set up your Supabase data
 Add the following environment variables in the Vercel project settings:
 
 - `DATABASE_URL`: Your Supabase connection string
+
   ```
   postgres://prisma.YOUR_PROJECT_REF:YOUR_PASSWORD@aws-0-YOUR_REGION.pooler.supabase.com:5432/postgres
   ```
 
 - `DIRECT_URL`: Same as DATABASE_URL for direct database access
+
   ```
   postgres://prisma.YOUR_PROJECT_REF:YOUR_PASSWORD@aws-0-YOUR_REGION.pooler.supabase.com:5432/postgres
   ```
 
+- `NEXTAUTH_URL`: Your application URL (e.g., https://yourdomain.vercel.app)
+
+- `NEXTAUTH_SECRET`: A secure random string for JWT encryption
+
+- (Optional) Custom landlord credentials:
+  - `DEFAULT_LANDLORD_EMAIL`: Email for the landlord account
+  - `DEFAULT_LANDLORD_PASSWORD`: Password for the landlord account
+  - `DEFAULT_LANDLORD_NAME`: Name for the landlord account
+
 Replace:
+
 - `YOUR_PROJECT_REF` with your Supabase project reference
 - `YOUR_REGION` with your Supabase database region (e.g., us-east-1)
 - `YOUR_PASSWORD` with the secure password you created for the prisma user
@@ -77,6 +89,7 @@ When you push changes to your repository, Vercel will automatically redeploy you
 
 1. Install dependencies
 2. Generate the Prisma client
-3. Build the Next.js application
+3. Initialize the landlord account from environment variables (if provided)
+4. Build the Next.js application
 
 This ensures that the Prisma client is always up-to-date with your schema.

@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3000",
-    "build": "prisma generate && next build",
+    "dev": "node scripts/dev-setup.js",
+    "dev:next": "next dev --port 3000",
+    "build": "prisma generate && node scripts/init-landlord-from-env.js && next build",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
@@ -14,7 +15,8 @@
     "db:seed": "bun prisma/seed.ts",
     "db:introspect": "node scripts/introspect-db.js",
     "db:test-connection": "bun scripts/test-prisma-connection.js",
-    "db:create-test-users": "node scripts/create-test-users-fixed.js"
+    "db:create-test-users": "node scripts/create-test-users-fixed.js",
+    "db:init-landlord": "node scripts/init-landlord-from-env.js"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.8.0",

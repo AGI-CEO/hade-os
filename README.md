@@ -36,6 +36,9 @@ You can clone this repo and deploy to Vercel in a few easy steps:
    - `DIRECT_URL`: Same as DATABASE_URL for direct database access
    - `NEXTAUTH_URL`: Your application URL (e.g., https://yourdomain.com)
    - `NEXTAUTH_SECRET`: A secure random string for JWT encryption
+   - `DEFAULT_LANDLORD_EMAIL`: (Optional) Custom landlord email
+   - `DEFAULT_LANDLORD_PASSWORD`: (Optional) Custom landlord password
+   - `DEFAULT_LANDLORD_NAME`: (Optional) Custom landlord name
 
 The deployment will automatically run `prisma generate` during the build process to ensure the Prisma client is properly generated.
 
@@ -79,6 +82,11 @@ The deployment will automatically run `prisma generate` during the build process
    - Configure NextAuth.js by setting:
      - `NEXTAUTH_URL=http://localhost:3000`
      - `NEXTAUTH_SECRET=your-secure-random-string`
+   - (Optional) Set custom landlord credentials:
+     - `DEFAULT_LANDLORD_EMAIL=your-email@example.com`
+     - `DEFAULT_LANDLORD_PASSWORD=your-secure-password`
+     - `DEFAULT_LANDLORD_NAME=Your Name`
+     - If left empty, the default test account (landlord@example.com/password123) will be used
 
 4. Set up the database:
 
