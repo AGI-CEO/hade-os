@@ -26,12 +26,15 @@ HADE (Housing Agent Does Everything) transforms property management into an enga
 
 ## 🚀 Quick Deploy
 
-You can clone this repo and deploy to Vercel in one easy step. Just add your own database information:
+You can clone this repo and deploy to Vercel in a few easy steps:
 
 1. Fork this repository
-2. Deploy to Vercel
-3. Set up your Supabase database
-4. Configure your environment variables
+2. Set up your Supabase database following the instructions in `README-PRISMA-SETUP.md`
+3. Deploy to Vercel and configure the following environment variables:
+   - `DATABASE_URL`: Your Supabase connection string
+   - `DIRECT_URL`: Same as DATABASE_URL for direct database access
+
+The deployment will automatically run `prisma generate` during the build process to ensure the Prisma client is properly generated.
 
 ## 🛠️ Tech Stack
 
