@@ -56,13 +56,17 @@ export function isProtectedRoute(pathname: string) {
 export function isRestrictedRoute(pathname: string, userType: string) {
   // Routes that are only accessible to landlords
   const landlordRoutes = [
-    "/",
-    "/portfolio",
-    "/finances",
-    "/reports",
-    "/quests",
-    "/prospecting",
-    "/ai-tools",
+    "/dashboard",
+    "/dashboard/portfolio",
+    "/dashboard/tenants",
+    "/dashboard/finances",
+    "/dashboard/reports",
+    "/dashboard/quests",
+    "/dashboard/education",
+    "/dashboard/prospecting",
+    "/dashboard/ai-tools",
+    "/dashboard/community",
+    "/dashboard/veteran-resources",
   ];
 
   // Routes that are only accessible to tenants
@@ -94,7 +98,10 @@ export function isRestrictedRoute(pathname: string, userType: string) {
 export function redirectBasedOnUserType(userType: string) {
   if (userType === "landlord") {
     return NextResponse.redirect(
-      new URL("/", process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001")
+      new URL(
+        "/dashboard",
+        process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001"
+      )
     );
   } else {
     return NextResponse.redirect(

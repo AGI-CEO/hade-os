@@ -22,13 +22,17 @@ function isProtectedRoute(pathname: string) {
 function isRestrictedRoute(pathname: string, userType: string) {
   // Routes that are only accessible to landlords
   const landlordRoutes = [
-    "/",
-    "/portfolio",
-    "/finances",
-    "/reports",
-    "/quests",
-    "/prospecting",
-    "/ai-tools",
+    "/dashboard",
+    "/dashboard/portfolio",
+    "/dashboard/tenants",
+    "/dashboard/finances",
+    "/dashboard/reports",
+    "/dashboard/quests",
+    "/dashboard/education",
+    "/dashboard/prospecting",
+    "/dashboard/ai-tools",
+    "/dashboard/community",
+    "/dashboard/veteran-resources",
   ];
 
   // Routes that are only accessible to tenants
@@ -85,7 +89,7 @@ export async function middleware(request: NextRequest) {
     ) {
       // Redirect to the appropriate dashboard based on user type
       if (token.userType === "landlord") {
-        return NextResponse.redirect(new URL("/", request.url));
+        return NextResponse.redirect(new URL("/dashboard", request.url));
       } else {
         return NextResponse.redirect(new URL("/connect", request.url));
       }
@@ -95,7 +99,7 @@ export async function middleware(request: NextRequest) {
   // If the user is already logged in and trying to access login page, redirect to appropriate dashboard
   if (pathname === "/login" && token) {
     if (token.userType === "landlord") {
-      return NextResponse.redirect(new URL("/", request.url));
+      return NextResponse.redirect(new URL("/dashboard", request.url));
     } else {
       return NextResponse.redirect(new URL("/connect", request.url));
     }
