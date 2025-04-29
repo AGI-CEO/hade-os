@@ -8,11 +8,14 @@ export default function ConnectLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex min-h-screen">
+    <div className="min-h-screen">
       <TenantSidebar />
-      <div className="flex-1 flex flex-col">
-        <TopBar />
-        <main className="flex-1 p-4 md:p-6">{children}</main>
+      <div
+        className="ml-56 transition-all duration-300 ease-in-out"
+        data-sidebar-collapsed="false"
+      >
+        <TopBar className="sticky top-0 z-30 bg-background" />
+        <main className="p-4 md:p-6 min-h-[calc(100vh-64px)]">{children}</main>
       </div>
     </div>
   );

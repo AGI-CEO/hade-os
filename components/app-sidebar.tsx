@@ -97,6 +97,24 @@ export function AppSidebar() {
   const pathname = usePathname();
   const { data: session } = useSession();
 
+  // Update the data-sidebar-collapsed attribute when sidebar state changes
+  React.useEffect(() => {
+    const mainContent = document.querySelector("[data-sidebar-collapsed]");
+    if (mainContent) {
+      mainContent.setAttribute(
+        "data-sidebar-collapsed",
+        isCollapsed.toString()
+      );
+      if (isCollapsed) {
+        mainContent.classList.remove("ml-56");
+        mainContent.classList.add("ml-16");
+      } else {
+        mainContent.classList.remove("ml-16");
+        mainContent.classList.add("ml-56");
+      }
+    }
+  }, [isCollapsed]);
+
   // Only hide the sidebar for tenant users
   // For now, we'll show it for everyone else (including when user is null)
   if (session?.user?.userType === "tenant") {
@@ -195,7 +213,7 @@ export function AppSidebar() {
   return (
     <aside
       data-collapsed={isCollapsed}
-      className="group relative flex flex-col h-screen bg-card border-r border-border data-[collapsed=true]:w-16 w-56 transition-all duration-300 ease-in-out"
+      className="group fixed top-0 left-0 z-40 flex flex-col h-screen bg-card border-r border-border data-[collapsed=true]:w-16 w-56 transition-all duration-300 ease-in-out"
     >
       <div className="flex h-16 items-center justify-between px-4 border-b border-border">
         <motion.div

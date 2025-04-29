@@ -26,12 +26,16 @@ import { Badge } from "@/components/ui/badge";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 
-export function TopBar() {
+export function TopBar({ className }: { className?: string }) {
   const [searchFocused, setSearchFocused] = useState(false);
   const { data: session } = useSession();
 
   return (
-    <div className="border-b border-border p-4 flex items-center justify-between">
+    <div
+      className={`border-b border-border p-4 flex items-center justify-between ${
+        className || ""
+      }`}
+    >
       <div className="flex-1 max-w-md">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
