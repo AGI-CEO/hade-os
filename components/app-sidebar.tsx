@@ -127,6 +127,13 @@ export function AppSidebar() {
       href: "/dashboard/tenants",
     },
     {
+      title: "Leases",
+      label: "",
+      icon: <FileText className={iconClasses} />,
+      variant: pathname.startsWith("/dashboard/leases") ? "default" : "ghost",
+      href: "/dashboard/leases",
+    },
+    {
       title: "Finances",
       label: "",
       icon: <DollarSign className={iconClasses} />,

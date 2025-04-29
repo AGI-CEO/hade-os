@@ -79,21 +79,26 @@ model VerificationToken {
 }
 
 model Property {
-  id            String    @id @default(uuid())
-  address       String
-  city          String
-  state         String
-  zipCode       String
-  image         String?
-  value         Float
-  occupancy     String    // occupied, vacant
-  rentAmount    Float?
-  rentDue       DateTime?
-  dateAdded     DateTime  @default(now())
-  userId        String
-  user          User      @relation(fields: [userId], references: [id])
+  id                String    @id @default(uuid())
+  address           String
+  city              String
+  state             String
+  zipCode           String
+  image             String?
+  value             Float
+  occupancy         String    // occupied, vacant
+  rentAmount        Float?
+  rentDue           DateTime?
+  dateAdded         DateTime  @default(now())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id])
   maintenanceRequests MaintenanceRequest[]
-  tenants       Tenant[]
+  tenants           Tenant[]
+  leases            Lease[]
+  documents         Document[]    @relation("PropertyDocuments")
+  incomes           Income[]
+  expenses          Expense[]
+  notifications     Notification[]
 
   @@index([userId])
 }
@@ -104,12 +109,19 @@ model MaintenanceRequest {
   description   String
   status        String    // pending, in-progress, completed
   priority      String    // low, medium, high
+  cost          Float?    // Cost of the maintenance work
+  vendorId      String?   // Optional reference to a vendor
+  vendor        Vendor?   @relation(fields: [vendorId], references: [id])
+  notes         String?   // Additional notes about the maintenance
+  completedDate DateTime? // When the maintenance was completed
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   propertyId    String
   property      Property  @relation(fields: [propertyId], references: [id])
+  messages      MaintenanceMessage[]
 
   @@index([propertyId])
+  @@index([vendorId])
 }
 
 model PortfolioSnapshot {
@@ -139,7 +151,177 @@ model Tenant {
   property      Property  @relation(fields: [propertyId], references: [id])
   userId        String?   @unique
   user          User?     @relation("UserToTenant", fields: [userId], references: [id])
+  leases        Lease[]
+  rentPayments  RentPayment[]
+  documents     Document[]    @relation("TenantDocuments")
+  notifications Notification[]
 
   @@index([propertyId])
   @@index([email])
+}
+
+// Lease Management Models
+model LeaseTemplate {
+  id            String    @id @default(uuid())
+  name          String
+  description   String?
+  content       String    @db.Text  // The template content in markdown or HTML
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  userId        String    // The landlord who created the template
+  leases        Lease[]   // Leases created from this template
+}
+
+model Lease {
+  id              String    @id @default(uuid())
+  title           String
+  content         String    @db.Text  // The lease content in markdown or HTML
+  startDate       DateTime
+  endDate         DateTime
+  status          String    // draft, active, expired, renewed
+  monthlyRent     Float
+  securityDeposit Float?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  propertyId      String
+  property        Property  @relation(fields: [propertyId], references: [id])
+  tenantId        String
+  tenant          Tenant    @relation(fields: [tenantId], references: [id])
+  templateId      String?
+  template        LeaseTemplate? @relation(fields: [templateId], references: [id])
+  documents       Document[]    @relation("LeaseDocuments")
+
+  @@index([propertyId])
+  @@index([tenantId])
+  @@index([templateId])
+}
+
+// Document Management Models
+model Document {
+  id            String    @id @default(uuid())
+  name          String
+  description   String?
+  fileUrl       String    // URL to the stored file
+  fileType      String    // PDF, DOCX, JPG, etc.
+  fileSize      Int       // Size in bytes
+  category      String    // lease, financial, maintenance, etc.
+  isShared      Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  propertyId    String?
+  property      Property? @relation("PropertyDocuments", fields: [propertyId], references: [id])
+  tenantId      String?
+  tenant        Tenant?   @relation("TenantDocuments", fields: [tenantId], references: [id])
+  leaseId       String?
+  lease         Lease?    @relation("LeaseDocuments", fields: [leaseId], references: [id])
+
+  @@index([propertyId])
+  @@index([tenantId])
+  @@index([leaseId])
+  @@index([category])
+}
+
+// Financial Tracking Models
+model Income {
+  id            String    @id @default(uuid())
+  amount        Float
+  date          DateTime
+  category      String    // rent, other
+  description   String?
+  recurring     Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  propertyId    String
+  property      Property  @relation(fields: [propertyId], references: [id])
+
+  @@index([propertyId])
+  @@index([date])
+  @@index([category])
+}
+
+model Expense {
+  id            String    @id @default(uuid())
+  amount        Float
+  date          DateTime
+  category      String    // maintenance, taxes, insurance, utilities, etc.
+  description   String?
+  recurring     Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  propertyId    String
+  property      Property  @relation(fields: [propertyId], references: [id])
+  vendorId      String?
+  vendor        Vendor?   @relation(fields: [vendorId], references: [id])
+
+  @@index([propertyId])
+  @@index([date])
+  @@index([category])
+  @@index([vendorId])
+}
+
+model RentPayment {
+  id            String    @id @default(uuid())
+  amount        Float
+  date          DateTime
+  method        String    // cash, check, bank transfer, etc.
+  status        String    // pending, completed, failed
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  tenantId      String
+  tenant        Tenant    @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId])
+  @@index([date])
+  @@index([status])
+}
+
+// Notification System Models
+model Notification {
+  id            String    @id @default(uuid())
+  title         String
+  message       String
+  type          String    // rent_due, maintenance_update, lease_renewal, system
+  isRead        Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  propertyId    String?
+  property      Property? @relation(fields: [propertyId], references: [id])
+  tenantId      String?
+  tenant        Tenant?   @relation(fields: [tenantId], references: [id])
+
+  @@index([propertyId])
+  @@index([tenantId])
+  @@index([type])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+// Maintenance Request System Models
+model Vendor {
+  id            String    @id @default(uuid())
+  name          String
+  email         String
+  phone         String
+  category      String    // plumber, electrician, general, etc.
+  rating        Int?      // 1-5 rating
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  maintenanceRequests MaintenanceRequest[]
+  expenses      Expense[]
+
+  @@index([category])
+  @@index([email])
+}
+
+model MaintenanceMessage {
+  id                  String    @id @default(uuid())
+  message             String
+  createdAt           DateTime  @default(now())
+  senderType          String    // landlord, tenant, vendor
+  maintenanceRequestId String
+  maintenanceRequest  MaintenanceRequest @relation(fields: [maintenanceRequestId], references: [id])
+
+  @@index([maintenanceRequestId])
+  @@index([createdAt])
 }
