@@ -1,15 +1,11 @@
-"use client";
-
-import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Suspense } from "react";
 import { LeaseGenerator } from "@/components/lease-generator";
+import NewLeaseClient from "./new-lease-client";
 
 export default function NewLeasePage() {
-  const searchParams = useSearchParams();
-  const templateId = searchParams.get("templateId");
-
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
@@ -23,7 +19,9 @@ export default function NewLeasePage() {
         </h1>
       </div>
 
-      <LeaseGenerator />
+      <Suspense fallback={<div>Loading...</div>}>
+        <NewLeaseClient />
+      </Suspense>
     </div>
   );
 }

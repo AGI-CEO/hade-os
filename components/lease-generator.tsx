@@ -51,12 +51,18 @@ type LeaseTemplate = {
   description: string;
 };
 
-export function LeaseGenerator() {
+type LeaseGeneratorProps = {
+  initialTemplateId?: string;
+};
+
+export function LeaseGenerator({
+  initialTemplateId = "",
+}: LeaseGeneratorProps) {
   const router = useRouter();
   const { toast } = useToast();
-  
+
   // Form state
-  const [templateId, setTemplateId] = useState("");
+  const [templateId, setTemplateId] = useState(initialTemplateId);
   const [propertyId, setPropertyId] = useState("");
   const [tenantId, setTenantId] = useState("");
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
@@ -64,24 +70,24 @@ export function LeaseGenerator() {
   const [monthlyRent, setMonthlyRent] = useState("");
   const [securityDeposit, setSecurityDeposit] = useState("");
   const [status, setStatus] = useState("draft");
-  
+
   // Data state
   const [templates, setTemplates] = useState<LeaseTemplate[]>([]);
   const [properties, setProperties] = useState<Property[]>([]);
   const [tenants, setTenants] = useState<Tenant[]>([]);
-  
+
   // UI state
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Fetch data
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
-        
+
         // Fetch templates
         const templatesResponse = await fetch("/api/lease-templates");
         if (!templatesResponse.ok) {
@@ -89,7 +95,7 @@ export function LeaseGenerator() {
         }
         const templatesData = await templatesResponse.json();
         setTemplates(templatesData);
-        
+
         // Fetch properties
         const propertiesResponse = await fetch("/api/properties");
         if (!propertiesResponse.ok) {
@@ -97,7 +103,7 @@ export function LeaseGenerator() {
         }
         const propertiesData = await propertiesResponse.json();
         setProperties(propertiesData);
-        
+
         // Fetch tenants
         const tenantsResponse = await fetch("/api/tenants");
         if (!tenantsResponse.ok) {
@@ -105,7 +111,6 @@ export function LeaseGenerator() {
         }
         const tenantsData = await tenantsResponse.json();
         setTenants(tenantsData);
-        
       } catch (err) {
         console.error("Error fetching data:", err);
         setError("Failed to load required data.");
@@ -118,34 +123,41 @@ export function LeaseGenerator() {
         setLoading(false);
       }
     };
-    
+
     fetchData();
   }, [toast]);
-  
+
   const handleGenerate = async () => {
     try {
       setGenerating(true);
       setError(null);
-      
+
       // Validate form
-      if (!templateId || !propertyId || !tenantId || !startDate || !endDate || !monthlyRent) {
+      if (
+        !templateId ||
+        !propertyId ||
+        !tenantId ||
+        !startDate ||
+        !endDate ||
+        !monthlyRent
+      ) {
         setError("All fields except security deposit are required.");
         return;
       }
-      
+
       // Validate dates
       if (startDate >= endDate) {
         setError("End date must be after start date.");
         return;
       }
-      
+
       // Validate rent amount
       const rentAmount = parseFloat(monthlyRent);
       if (isNaN(rentAmount) || rentAmount <= 0) {
         setError("Monthly rent must be a positive number.");
         return;
       }
-      
+
       // Validate security deposit if provided
       let depositAmount = 0;
       if (securityDeposit) {
@@ -155,7 +167,7 @@ export function LeaseGenerator() {
           return;
         }
       }
-      
+
       // Generate lease
       const response = await fetch("/api/leases/generate", {
         method: "POST",
@@ -173,22 +185,21 @@ export function LeaseGenerator() {
           status,
         }),
       });
-      
+
       if (!response.ok) {
         const data = await response.json();
         throw new Error(data.message || "Failed to generate lease");
       }
-      
+
       const lease = await response.json();
-      
+
       toast({
         title: "Success",
         description: "Lease generated successfully.",
       });
-      
+
       // Redirect to the new lease
       router.push(`/dashboard/leases/${lease.id}`);
-      
     } catch (err: any) {
       console.error("Error generating lease:", err);
       setError(err.message || "Failed to generate lease.");
@@ -201,7 +212,7 @@ export function LeaseGenerator() {
       setGenerating(false);
     }
   };
-  
+
   // Show loading state
   if (loading) {
     return (
@@ -211,7 +222,7 @@ export function LeaseGenerator() {
       </div>
     );
   }
-  
+
   return (
     <Card className="bg-card border-border">
       <CardHeader>
@@ -230,7 +241,7 @@ export function LeaseGenerator() {
             <span className="text-red-500">{error}</span>
           </div>
         )}
-        
+
         <div className="space-y-2">
           <Label htmlFor="template">Lease Template</Label>
           <Select value={templateId} onValueChange={setTemplateId}>
@@ -257,7 +268,7 @@ export function LeaseGenerator() {
             </p>
           )}
         </div>
-        
+
         <div className="space-y-2">
           <Label htmlFor="property">Property</Label>
           <Select value={propertyId} onValueChange={setPropertyId}>
@@ -279,7 +290,7 @@ export function LeaseGenerator() {
             </SelectContent>
           </Select>
         </div>
-        
+
         <div className="space-y-2">
           <Label htmlFor="tenant">Tenant</Label>
           <Select value={tenantId} onValueChange={setTenantId}>
@@ -301,7 +312,7 @@ export function LeaseGenerator() {
             </SelectContent>
           </Select>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="startDate">Lease Start Date</Label>
@@ -326,7 +337,7 @@ export function LeaseGenerator() {
               </PopoverContent>
             </Popover>
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="endDate">Lease End Date</Label>
             <Popover>
@@ -352,7 +363,7 @@ export function LeaseGenerator() {
             </Popover>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="monthlyRent">Monthly Rent ($)</Label>
@@ -366,7 +377,7 @@ export function LeaseGenerator() {
               placeholder="1500.00"
             />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="securityDeposit">Security Deposit ($)</Label>
             <Input
@@ -380,7 +391,7 @@ export function LeaseGenerator() {
             />
           </div>
         </div>
-        
+
         <div className="space-y-2">
           <Label htmlFor="status">Lease Status</Label>
           <Select value={status} onValueChange={setStatus}>
@@ -393,7 +404,8 @@ export function LeaseGenerator() {
             </SelectContent>
           </Select>
           <p className="text-xs text-muted-foreground mt-1">
-            Draft leases can be edited before finalizing. Active leases will update tenant records.
+            Draft leases can be edited before finalizing. Active leases will
+            update tenant records.
           </p>
         </div>
       </CardContent>
