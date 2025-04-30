@@ -138,14 +138,14 @@ export function TenantSidebar() {
       title: "Documents",
       label: "",
       icon: <FileText className={iconClasses} />,
-      variant: pathname === "/connect/documents" ? "default" : "ghost",
+      variant: pathname.startsWith("/connect/documents") ? "default" : "ghost",
       href: "/connect/documents",
     },
     {
       title: "Lease",
       label: "",
       icon: <FileSignature className={iconClasses} />,
-      variant: pathname === "/connect/lease" ? "default" : "ghost",
+      variant: pathname.startsWith("/connect/lease") ? "default" : "ghost",
       href: "/connect/lease",
     },
     {

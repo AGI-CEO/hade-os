@@ -12,6 +12,7 @@ import {
   Users,
   DollarSign,
   FileText,
+  File,
   Trophy,
   GraduationCap,
   Search,
@@ -150,6 +151,15 @@ export function AppSidebar() {
       icon: <FileText className={iconClasses} />,
       variant: pathname.startsWith("/dashboard/leases") ? "default" : "ghost",
       href: "/dashboard/leases",
+    },
+    {
+      title: "Documents",
+      label: "",
+      icon: <File className={iconClasses} />,
+      variant: pathname.startsWith("/dashboard/documents")
+        ? "default"
+        : "ghost",
+      href: "/dashboard/documents",
     },
     {
       title: "Finances",
