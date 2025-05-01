@@ -67,14 +67,33 @@ This MVP PRD outlines the core features needed for an initial release that deliv
    - Simple navigation between different sections
 
 6. **Basic Financial Tracking**
+
    - Property value tracking
    - Rent amount tracking
    - Simple financial overview
+
+7. **Lease Management System**
+
+   - Lease template creation and management
+   - Lease generation with property/tenant data
+   - Lease storage and retrieval
+   - Lease status tracking (draft, active, expired, renewed)
+   - Tenant access to lease documents
+   - Lease editing and updating
+
+8. **Document Management System**
+   - Document upload and storage using Supabase Storage
+   - Document categorization (lease, financial, maintenance, legal, etc.)
+   - Document sharing between landlord and tenant
+   - Document viewing and downloading
+   - Document search and filtering
+   - Association of documents with properties, tenants, and leases
 
 ### Technical Foundation
 
 - Next.js framework with TypeScript
 - Prisma ORM with Supabase (PostgreSQL)
+- Supabase Storage for file storage and management
 - NextAuth.js for authentication
 - Tailwind CSS for styling
 - Bun package manager
@@ -264,12 +283,12 @@ This MVP PRD outlines the core features needed for an initial release that deliv
 
 ### High Priority (MVP Requirements)
 
-1. **Complete Lease Management System**
+1. **✅ Complete Lease Management System** (Implemented)
 
-   - Lease template creation
-   - Lease generation with property/tenant data
-   - Lease storage and retrieval
-   - Lease renewal workflow
+   - ✅ Lease template creation
+   - ✅ Lease generation with property/tenant data
+   - ✅ Lease storage and retrieval
+   - ✅ Lease status tracking and management
 
 2. **Enhanced Financial Tracking**
 
@@ -278,17 +297,18 @@ This MVP PRD outlines the core features needed for an initial release that deliv
    - ROI and cash flow calculations
    - Financial reporting
 
-3. **Document Management System**
+3. **✅ Document Management System** (Implemented)
 
-   - Document upload and storage
-   - Document categorization
-   - Document sharing between landlord and tenant
-   - Basic document generation
+   - ✅ Document upload and storage
+   - ✅ Document categorization
+   - ✅ Document sharing between landlord and tenant
+   - ✅ Document viewing and downloading
 
 4. **Improved Tenant Portal**
 
    - Enhanced rent payment tracking
-   - Document access and management
+   - ✅ Document access and management (Implemented)
+   - ✅ Lease access and viewing (Implemented)
    - Account settings and preferences
 
 5. **Notification System**
@@ -381,11 +401,21 @@ This MVP PRD outlines the core features needed for an initial release that deliv
 
 ### Phase 1: MVP Release (8 weeks)
 
-- Week 1-2: Complete core property and tenant management
-- Week 3-4: Implement lease management and document system
+- ✅ Week 1-2: Complete core property and tenant management
+- ✅ Week 3-4: Implement lease management and document system
 - Week 5-6: Enhance financial tracking and reporting
 - Week 7: Improve tenant portal and notification system
 - Week 8: Testing, bug fixes, and deployment
+
+### Current Progress (Updated)
+
+- ✅ Core property and tenant management implemented
+- ✅ Lease management system fully implemented
+- ✅ Document management system fully implemented
+- 🔄 Financial tracking enhancements in progress
+- 🔄 Tenant portal improvements in progress
+- 🔄 Notification system in progress
+- 🔄 Maintenance request system improvements in progress
 
 ### Phase 2: Premium Features (4 weeks post-MVP)
 
