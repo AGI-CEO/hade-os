@@ -1,4 +1,12 @@
 import NextAuth from "next-auth";
+import type {
+  User as NextAuthUser,
+  Account,
+  Profile,
+  Session,
+  SessionStrategy,
+} from "next-auth";
+import type { AdapterUser } from "next-auth/adapters";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/lib/prisma";
@@ -13,7 +21,7 @@ export const authOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials): Promise<AdapterUser | null> {
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
@@ -31,19 +39,12 @@ export const authOptions = {
 
         console.log("User found:", user.email, "Checking password...");
 
-        // For users migrated from the old system who have plain text passwords
+        const { password: _, ...userWithoutPassword } = user;
+
         if (user.password === credentials.password) {
           console.log("Password matched (plain text)");
-          // In a production app, you would hash the password here
-          // and update the user record with the hashed password
-          return user;
+          return userWithoutPassword as AdapterUser;
         }
-
-        // For new users with hashed passwords (future implementation)
-        // if (user.password && (await compare(credentials.password, user.password))) {
-        //   console.log("Password matched (hashed)");
-        //   return user;
-        // }
 
         console.log("Password did not match");
         return null;
@@ -51,29 +52,35 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({
+      token,
+      user,
+    }: {
+      token: any;
+      user: AdapterUser | NextAuthUser | undefined;
+    }) {
       if (user) {
         console.log(
           "Setting JWT token data from user:",
           user.id,
-          user.userType
+          (user as any).userType
         );
         token.id = user.id;
-        token.userType = user.userType;
-        token.role = user.role;
+        token.userType = (user as any).userType;
+        token.role = (user as any).role;
       }
       return token;
     },
-    async session({ session, token }) {
-      if (token) {
+    async session({ session, token }: { session: Session; token: any }) {
+      if (token && session.user) {
         console.log(
           "Setting session data from token:",
           token.id,
           token.userType
         );
-        session.user.id = token.id;
-        session.user.userType = token.userType;
-        session.user.role = token.role;
+        session.user.id = token.id as string;
+        session.user.userType = token.userType as string;
+        session.user.role = token.role as string;
       }
       return session;
     },
@@ -82,13 +89,13 @@ export const authOptions = {
     signIn: "/login",
   },
   session: {
-    strategy: "jwt",
+    strategy: "jwt" as SessionStrategy,
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   debug: process.env.NODE_ENV === "development",
   secret: process.env.NEXTAUTH_SECRET,
 };
 
-const handler = NextAuth(authOptions);
+const handler = NextAuth(authOptions as any);
 
 export { handler as GET, handler as POST };

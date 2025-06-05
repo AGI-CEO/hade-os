@@ -40,6 +40,55 @@ export async function GET() {
         ? Math.round((occupiedProperties / totalProperties) * 100)
         : 0;
 
+    // Get current month's income and expenses
+    const currentDate = new Date();
+    const startOfMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      1
+    );
+    const endOfMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1,
+      0
+    );
+
+    // Get income for current month
+    const currentMonthIncome = await prisma.income.aggregate({
+      where: {
+        date: {
+          gte: startOfMonth,
+          lte: endOfMonth,
+        },
+      },
+      _sum: {
+        amount: true,
+      },
+    });
+
+    // Get expenses for current month
+    const currentMonthExpenses = await prisma.expense.aggregate({
+      where: {
+        date: {
+          gte: startOfMonth,
+          lte: endOfMonth,
+        },
+      },
+      _sum: {
+        amount: true,
+      },
+    });
+
+    // Calculate net cash flow
+    const currentMonthIncomeTotal = currentMonthIncome._sum.amount || 0;
+    const currentMonthExpensesTotal = currentMonthExpenses._sum.amount || 0;
+    const netCashFlow = currentMonthIncomeTotal - currentMonthExpensesTotal;
+
+    // Calculate cash on cash return (annualized)
+    const annualizedCashFlow = netCashFlow * 12;
+    const cashOnCashReturn =
+      totalValue > 0 ? (annualizedCashFlow / totalValue) * 100 : 0;
+
     // Get historical data for calculating percentage changes
     // First, try to get a snapshot from 30 days ago
     const thirtyDaysAgo = new Date();
@@ -86,6 +135,39 @@ export async function GET() {
     const equityGrowth = Math.round(valueChangePercent * 10) / 10;
     const annualReturn = Math.round(incomeChangePercent * 10) / 10;
 
+    // Get year-to-date income and expenses
+    const startOfYear = new Date(currentDate.getFullYear(), 0, 1);
+
+    // Get YTD income
+    const ytdIncome = await prisma.income.aggregate({
+      where: {
+        date: {
+          gte: startOfYear,
+          lte: currentDate,
+        },
+      },
+      _sum: {
+        amount: true,
+      },
+    });
+
+    // Get YTD expenses
+    const ytdExpenses = await prisma.expense.aggregate({
+      where: {
+        date: {
+          gte: startOfYear,
+          lte: currentDate,
+        },
+      },
+      _sum: {
+        amount: true,
+      },
+    });
+
+    const yearToDateIncome = ytdIncome._sum.amount || 0;
+    const yearToDateExpenses = ytdExpenses._sum.amount || 0;
+    const yearToDateProfit = yearToDateIncome - yearToDateExpenses;
+
     // Save current snapshot for future comparisons
     await prisma.portfolioSnapshot.create({
       data: {
@@ -98,9 +180,17 @@ export async function GET() {
       totalValue,
       totalProperties,
       monthlyIncome,
+      monthlyExpenses: currentMonthExpensesTotal,
+      netCashFlow,
+      cashOnCashReturn: parseFloat(cashOnCashReturn.toFixed(1)),
       annualReturn,
       occupancyRate,
       equityGrowth,
+      yearToDateIncome,
+      yearToDateExpenses,
+      yearToDateProfit,
+      valueChangePercent: equityGrowth,
+      incomeChangePercent: annualReturn,
     });
   } catch (error) {
     console.error("Error fetching portfolio stats:", error);

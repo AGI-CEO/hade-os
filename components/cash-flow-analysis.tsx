@@ -1,64 +1,201 @@
-"use client"
+"use client";
 
-import { Card, CardContent } from "@/components/ui/card"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Line, ComposedChart } from "recharts"
-import { Badge } from "@/components/ui/badge"
+import { useState, useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import {
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Line,
+  ComposedChart,
+} from "recharts";
+import { Badge } from "@/components/ui/badge";
+import { Loader2 } from "lucide-react";
 
-// Sample cash flow data
-const monthlyCashFlowData = [
-  { name: "Jan", income: 4500, expenses: 2700, cashFlow: 1800 },
-  { name: "Feb", income: 4500, expenses: 2800, cashFlow: 1700 },
-  { name: "Mar", income: 4700, expenses: 2750, cashFlow: 1950 },
-  { name: "Apr", income: 4700, expenses: 2900, cashFlow: 1800 },
-  { name: "May", income: 4700, expenses: 2800, cashFlow: 1900 },
-  { name: "Jun", income: 4700, expenses: 2850, cashFlow: 1850 },
-]
-
-const quarterlyCashFlowData = [
-  { name: "Q1", income: 13700, expenses: 8250, cashFlow: 5450 },
-  { name: "Q2", income: 14100, expenses: 8550, cashFlow: 5550 },
-  { name: "Q3", income: 14300, expenses: 8650, cashFlow: 5650 },
-  { name: "Q4", income: 14500, expenses: 8750, cashFlow: 5750 },
-]
-
-const yearlyCashFlowData = [
-  { name: "2020", income: 48000, expenses: 30000, cashFlow: 18000 },
-  { name: "2021", income: 52000, expenses: 32000, cashFlow: 20000 },
-  { name: "2022", income: 54000, expenses: 33000, cashFlow: 21000 },
-  { name: "2023", income: 56600, expenses: 33600, cashFlow: 23000 },
-]
+// Define types for cash flow data
+type CashFlowDataPoint = {
+  name: string;
+  income: number;
+  expenses: number;
+  cashFlow: number;
+};
 
 type CashFlowAnalysisProps = {
-  timeFrame: "monthly" | "quarterly" | "yearly"
-}
+  timeFrame: "monthly" | "quarterly" | "yearly";
+};
 
 export function CashFlowAnalysis({ timeFrame }: CashFlowAnalysisProps) {
+  const [data, setData] = useState<CashFlowDataPoint[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [totalIncome, setTotalIncome] = useState(0);
+  const [totalExpenses, setTotalExpenses] = useState(0);
+  const [totalCashFlow, setTotalCashFlow] = useState(0);
+  const [incomeChange, setIncomeChange] = useState(0);
+  const [expensesChange, setExpensesChange] = useState(0);
+  const [cashFlowChange, setCashFlowChange] = useState(0);
+
+  useEffect(() => {
+    const fetchCashFlowData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Determine period parameter based on timeFrame
+        const period = timeFrame;
+
+        // Fetch financial summary data
+        const response = await fetch(
+          `/api/portfolio/financial-summary?period=${period}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch cash flow data");
+        }
+
+        const summaryData = await response.json();
+
+        // Extract time series data
+        const timeSeriesData = summaryData.timeSeriesData || [];
+
+        // Transform data for chart
+        const transformedData = timeSeriesData.map((item: any) => ({
+          name: item.name,
+          income: item.income,
+          expenses: item.expenses,
+          cashFlow: item.cashFlow,
+        }));
+
+        setData(transformedData);
+
+        // Calculate totals
+        const totalInc = transformedData.reduce(
+          (sum: number, item: CashFlowDataPoint) => sum + item.income,
+          0
+        );
+        const totalExp = transformedData.reduce(
+          (sum: number, item: CashFlowDataPoint) => sum + item.expenses,
+          0
+        );
+        const totalCF = transformedData.reduce(
+          (sum: number, item: CashFlowDataPoint) => sum + item.cashFlow,
+          0
+        );
+
+        setTotalIncome(totalInc);
+        setTotalExpenses(totalExp);
+        setTotalCashFlow(totalCF);
+
+        // Calculate percentage changes if we have data
+        if (transformedData.length > 1) {
+          const firstItem = transformedData[0];
+          const lastItem = transformedData[transformedData.length - 1];
+
+          const incChange =
+            firstItem.income > 0
+              ? Math.round(
+                  ((lastItem.income - firstItem.income) / firstItem.income) *
+                    100
+                )
+              : 0;
+
+          const expChange =
+            firstItem.expenses > 0
+              ? Math.round(
+                  ((lastItem.expenses - firstItem.expenses) /
+                    firstItem.expenses) *
+                    100
+                )
+              : 0;
+
+          const cfChange =
+            firstItem.cashFlow > 0
+              ? Math.round(
+                  ((lastItem.cashFlow - firstItem.cashFlow) /
+                    firstItem.cashFlow) *
+                    100
+                )
+              : 0;
+
+          setIncomeChange(incChange);
+          setExpensesChange(expChange);
+          setCashFlowChange(cfChange);
+        } else {
+          // Use summary data if available
+          setIncomeChange(summaryData.summary?.incomeChangePercent || 0);
+          setExpensesChange(summaryData.summary?.expensesChangePercent || 0);
+          setCashFlowChange(summaryData.summary?.cashFlowChangePercent || 0);
+        }
+      } catch (err) {
+        console.error("Error fetching cash flow data:", err);
+        setError("Failed to load cash flow data");
+
+        // Set fallback data
+        setData([]);
+        setTotalIncome(0);
+        setTotalExpenses(0);
+        setTotalCashFlow(0);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCashFlowData();
+  }, [timeFrame]);
+
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
       maximumFractionDigits: 0,
-    }).format(value)
-  }
-
-  // Select data based on timeFrame
-  const data =
-    timeFrame === "monthly"
-      ? monthlyCashFlowData
-      : timeFrame === "quarterly"
-        ? quarterlyCashFlowData
-        : yearlyCashFlowData
-
-  // Calculate totals
-  const totalIncome = data.reduce((sum, item) => sum + item.income, 0)
-  const totalExpenses = data.reduce((sum, item) => sum + item.expenses, 0)
-  const totalCashFlow = data.reduce((sum, item) => sum + item.cashFlow, 0)
+    }).format(value);
+  };
 
   // Calculate averages
-  const avgIncome = totalIncome / data.length
-  const avgExpenses = totalExpenses / data.length
-  const avgCashFlow = totalCashFlow / data.length
+  const avgIncome = data.length > 0 ? totalIncome / data.length : 0;
+  const avgExpenses = data.length > 0 ? totalExpenses / data.length : 0;
+  const avgCashFlow = data.length > 0 ? totalCashFlow / data.length : 0;
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-12">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 text-primary animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading financial data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6 rounded-lg border border-border bg-card/50 text-center">
+        <p className="text-red-500 mb-2">{error}</p>
+        <p className="text-muted-foreground">Please try again later</p>
+      </div>
+    );
+  }
+
+  if (data.length === 0) {
+    return (
+      <div className="p-6 rounded-lg border border-border bg-card/50 text-center">
+        <p className="text-muted-foreground mb-2">
+          No financial data available for this time period
+        </p>
+        <p className="text-sm text-muted-foreground">
+          Try adding some income and expense transactions
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -68,10 +205,15 @@ export function CashFlowAnalysis({ timeFrame }: CashFlowAnalysisProps) {
             <div className="flex justify-between items-center">
               <div>
                 <p className="text-sm text-muted-foreground">Total Income</p>
-                <p className="text-xl font-bold text-primary-foreground">{formatCurrency(totalIncome)}</p>
+                <p className="text-xl font-bold text-primary-foreground">
+                  {formatCurrency(totalIncome)}
+                </p>
               </div>
-              <Badge className="bg-green-500">
-                +{Math.round((data[data.length - 1].income / data[0].income - 1) * 100)}%
+              <Badge
+                className={incomeChange >= 0 ? "bg-green-500" : "bg-red-500"}
+              >
+                {incomeChange >= 0 ? "+" : ""}
+                {incomeChange}%
               </Badge>
             </div>
           </CardContent>
@@ -82,10 +224,15 @@ export function CashFlowAnalysis({ timeFrame }: CashFlowAnalysisProps) {
             <div className="flex justify-between items-center">
               <div>
                 <p className="text-sm text-muted-foreground">Total Expenses</p>
-                <p className="text-xl font-bold text-primary-foreground">{formatCurrency(totalExpenses)}</p>
+                <p className="text-xl font-bold text-primary-foreground">
+                  {formatCurrency(totalExpenses)}
+                </p>
               </div>
-              <Badge className="bg-red-500">
-                +{Math.round((data[data.length - 1].expenses / data[0].expenses - 1) * 100)}%
+              <Badge
+                className={expensesChange >= 0 ? "bg-red-500" : "bg-green-500"}
+              >
+                {expensesChange >= 0 ? "+" : ""}
+                {expensesChange}%
               </Badge>
             </div>
           </CardContent>
@@ -96,10 +243,15 @@ export function CashFlowAnalysis({ timeFrame }: CashFlowAnalysisProps) {
             <div className="flex justify-between items-center">
               <div>
                 <p className="text-sm text-muted-foreground">Net Cash Flow</p>
-                <p className="text-xl font-bold text-primary-foreground">{formatCurrency(totalCashFlow)}</p>
+                <p className="text-xl font-bold text-primary-foreground">
+                  {formatCurrency(totalCashFlow)}
+                </p>
               </div>
-              <Badge className="bg-primary">
-                +{Math.round((data[data.length - 1].cashFlow / data[0].cashFlow - 1) * 100)}%
+              <Badge
+                className={cashFlowChange >= 0 ? "bg-primary" : "bg-red-500"}
+              >
+                {cashFlowChange >= 0 ? "+" : ""}
+                {cashFlowChange}%
               </Badge>
             </div>
           </CardContent>
@@ -127,8 +279,14 @@ export function CashFlowAnalysis({ timeFrame }: CashFlowAnalysisProps) {
               className="w-full h-full"
             >
               <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <ComposedChart
+                  data={data}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="hsl(var(--border))"
+                  />
                   <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" />
                   <YAxis
                     stroke="hsl(var(--muted-foreground))"
@@ -136,8 +294,18 @@ export function CashFlowAnalysis({ timeFrame }: CashFlowAnalysisProps) {
                   />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Legend />
-                  <Bar dataKey="income" fill="var(--color-income)" name="Income" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="expenses" fill="var(--color-expenses)" name="Expenses" radius={[4, 4, 0, 0]} />
+                  <Bar
+                    dataKey="income"
+                    fill="var(--color-income)"
+                    name="Income"
+                    radius={[4, 4, 0, 0]}
+                  />
+                  <Bar
+                    dataKey="expenses"
+                    fill="var(--color-expenses)"
+                    name="Expenses"
+                    radius={[4, 4, 0, 0]}
+                  />
                   <Line
                     type="monotone"
                     dataKey="cashFlow"
@@ -159,9 +327,16 @@ export function CashFlowAnalysis({ timeFrame }: CashFlowAnalysisProps) {
           <CardContent className="p-4">
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground">Average Income</p>
-              <p className="text-xl font-bold text-primary-foreground">{formatCurrency(avgIncome)}</p>
+              <p className="text-xl font-bold text-primary-foreground">
+                {formatCurrency(avgIncome)}
+              </p>
               <p className="text-xs text-muted-foreground">
-                Per {timeFrame === "monthly" ? "month" : timeFrame === "quarterly" ? "quarter" : "year"}
+                Per{" "}
+                {timeFrame === "monthly"
+                  ? "month"
+                  : timeFrame === "quarterly"
+                  ? "quarter"
+                  : "year"}
               </p>
             </div>
           </CardContent>
@@ -171,9 +346,16 @@ export function CashFlowAnalysis({ timeFrame }: CashFlowAnalysisProps) {
           <CardContent className="p-4">
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground">Average Expenses</p>
-              <p className="text-xl font-bold text-primary-foreground">{formatCurrency(avgExpenses)}</p>
+              <p className="text-xl font-bold text-primary-foreground">
+                {formatCurrency(avgExpenses)}
+              </p>
               <p className="text-xs text-muted-foreground">
-                Per {timeFrame === "monthly" ? "month" : timeFrame === "quarterly" ? "quarter" : "year"}
+                Per{" "}
+                {timeFrame === "monthly"
+                  ? "month"
+                  : timeFrame === "quarterly"
+                  ? "quarter"
+                  : "year"}
               </p>
             </div>
           </CardContent>
@@ -183,14 +365,21 @@ export function CashFlowAnalysis({ timeFrame }: CashFlowAnalysisProps) {
           <CardContent className="p-4">
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground">Average Cash Flow</p>
-              <p className="text-xl font-bold text-primary-foreground">{formatCurrency(avgCashFlow)}</p>
+              <p className="text-xl font-bold text-primary-foreground">
+                {formatCurrency(avgCashFlow)}
+              </p>
               <p className="text-xs text-muted-foreground">
-                Per {timeFrame === "monthly" ? "month" : timeFrame === "quarterly" ? "quarter" : "year"}
+                Per{" "}
+                {timeFrame === "monthly"
+                  ? "month"
+                  : timeFrame === "quarterly"
+                  ? "quarter"
+                  : "year"}
               </p>
             </div>
           </CardContent>
         </Card>
       </div>
     </div>
-  )
+  );
 }

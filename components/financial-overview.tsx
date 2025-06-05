@@ -1,31 +1,108 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { TrendingUp, TrendingDown, DollarSign, PiggyBank, CreditCard } from "lucide-react"
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import {
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  PiggyBank,
+  CreditCard,
+  Loader2,
+} from "lucide-react";
 
-// Sample financial data
-const financialData = {
-  monthlyIncome: 4700,
-  monthlyExpenses: 2800,
-  netCashFlow: 1900,
-  cashOnCashReturn: 8.2,
-  totalInvestment: 280000,
-  yearToDateIncome: 23500,
-  yearToDateExpenses: 14000,
-  yearToDateProfit: 9500,
-}
+// Define types for the financial data
+type FinancialData = {
+  monthlyIncome: number;
+  monthlyExpenses: number;
+  netCashFlow: number;
+  cashOnCashReturn: number;
+  totalValue: number;
+  yearToDateIncome: number;
+  yearToDateExpenses: number;
+  yearToDateProfit: number;
+  valueChangePercent: number;
+  incomeChangePercent: number;
+};
 
 export function FinancialOverview() {
+  const [financialData, setFinancialData] = useState<FinancialData | null>(
+    null
+  );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchFinancialData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await fetch("/api/portfolio/stats");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch financial data");
+        }
+
+        const data = await response.json();
+        setFinancialData({
+          monthlyIncome: data.monthlyIncome || 0,
+          monthlyExpenses: data.monthlyExpenses || 0,
+          netCashFlow: data.netCashFlow || 0,
+          cashOnCashReturn: data.cashOnCashReturn || 0,
+          totalValue: data.totalValue || 0,
+          yearToDateIncome: data.yearToDateIncome || 0,
+          yearToDateExpenses: data.yearToDateExpenses || 0,
+          yearToDateProfit: data.yearToDateProfit || 0,
+          valueChangePercent: data.valueChangePercent || 0,
+          incomeChangePercent: data.incomeChangePercent || 0,
+        });
+      } catch (err) {
+        console.error("Error fetching financial data:", err);
+        setError("Failed to load financial data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFinancialData();
+  }, []);
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
       maximumFractionDigits: 0,
-    }).format(amount)
-  }
+    }).format(amount);
+  };
 
   const formatPercentage = (value: number) => {
-    return `${value}%`
+    return `${value}%`;
+  };
+
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[...Array(4)].map((_, index) => (
+          <div
+            key={index}
+            className="p-6 rounded-lg border border-border bg-card/50 flex items-center justify-center"
+          >
+            <Loader2 className="h-8 w-8 text-primary animate-spin" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (error || !financialData) {
+    return (
+      <div className="p-6 rounded-lg border border-border bg-card/50">
+        <p className="text-red-500">
+          Error loading financial data. Please try again later.
+        </p>
+      </div>
+    );
   }
 
   return (
@@ -41,10 +118,25 @@ export function FinancialOverview() {
           </div>
           <div>
             <p className="text-sm text-muted-foreground">Monthly Cash Flow</p>
-            <h3 className="text-2xl font-bold text-primary glow-text">{formatCurrency(financialData.netCashFlow)}</h3>
-            <div className="flex items-center text-green-500 text-sm">
-              <TrendingUp className="h-3 w-3 mr-1" />
-              <span>+5.3% from last month</span>
+            <h3 className="text-2xl font-bold text-primary glow-text">
+              {formatCurrency(financialData.netCashFlow)}
+            </h3>
+            <div
+              className={`flex items-center text-sm ${
+                financialData.incomeChangePercent >= 0
+                  ? "text-green-500"
+                  : "text-red-500"
+              }`}
+            >
+              {financialData.incomeChangePercent >= 0 ? (
+                <TrendingUp className="h-3 w-3 mr-1" />
+              ) : (
+                <TrendingDown className="h-3 w-3 mr-1" />
+              )}
+              <span>
+                {financialData.incomeChangePercent >= 0 ? "+" : ""}
+                {financialData.incomeChangePercent.toFixed(1)}% from last month
+              </span>
             </div>
           </div>
         </div>
@@ -64,9 +156,22 @@ export function FinancialOverview() {
             <h3 className="text-2xl font-bold text-primary glow-text">
               {formatPercentage(financialData.cashOnCashReturn)}
             </h3>
-            <div className="flex items-center text-green-500 text-sm">
-              <TrendingUp className="h-3 w-3 mr-1" />
-              <span>+0.7% from last year</span>
+            <div
+              className={`flex items-center text-sm ${
+                financialData.valueChangePercent >= 0
+                  ? "text-green-500"
+                  : "text-red-500"
+              }`}
+            >
+              {financialData.valueChangePercent >= 0 ? (
+                <TrendingUp className="h-3 w-3 mr-1" />
+              ) : (
+                <TrendingDown className="h-3 w-3 mr-1" />
+              )}
+              <span>
+                {financialData.valueChangePercent >= 0 ? "+" : ""}
+                {financialData.valueChangePercent.toFixed(1)}% from last year
+              </span>
             </div>
           </div>
         </div>
@@ -88,7 +193,9 @@ export function FinancialOverview() {
             </h3>
             <div className="flex items-center text-green-500 text-sm">
               <TrendingUp className="h-3 w-3 mr-1" />
-              <span>+12.4% from last year</span>
+              <span>
+                +{financialData.incomeChangePercent.toFixed(1)}% from last year
+              </span>
             </div>
           </div>
         </div>
@@ -116,5 +223,5 @@ export function FinancialOverview() {
         </div>
       </motion.div>
     </div>
-  )
+  );
 }
