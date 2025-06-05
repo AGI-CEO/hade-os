@@ -101,6 +101,7 @@ model Property {
   incomes           Income[]
   expenses          Expense[]
   notifications     Notification[]
+  propertyImages    PropertyImage[]
 
   @@index([userId])
 }
@@ -342,4 +343,19 @@ model MaintenanceMessage {
 
   @@index([maintenanceRequestId])
   @@index([createdAt])
+}
+
+model PropertyImage {
+  id          String   @id @default(uuid())
+  imageUrl    String   // Public URL from Supabase Storage
+  storagePath String   // Path to the file in Supabase Storage (e.g., property-images/propertyId/filename.jpg)
+  altText     String?
+  isPrimary   Boolean  @default(false)
+  uploadedAt  DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  propertyId  String
+  property    Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@index([propertyId])
 }
