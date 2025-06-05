@@ -133,7 +133,8 @@ These are remaining MVP features based on PRD Sec 4, cross-referenced with PRD S
 _ Ensure "Complete CRUD operations for properties" (verify thoroughness beyond basic).
 _ Develop/Enhance property details dashboard to be "comprehensive".
 _ Implement property value history tracking (if not fully covered by basic tracking).
-_ Implement property occupancy status management (beyond basic tracking). \* Add property image upload and management.
+_ Implement property occupancy status management (beyond basic tracking).
+\_ Add property image upload and management. (Backend Implemented: Schema, Migrations, API for upload/list/delete. Frontend Pending.)
 
 **2. Tenant Management Enhancements (from PRD Sec 4.1.2)**
 _ Ensure "Complete CRUD operations for tenants" (verify thoroughness beyond basic).
