@@ -35,7 +35,8 @@ model User {
   accounts      Account[]
   sessions      Session[]
 
-  notifications Notification[]
+  notifications        Notification[]
+  maintenanceMessages  MaintenanceMessage[]
 
   @@index([email])
   @@index([userType])
@@ -112,8 +113,8 @@ model MaintenanceRequest {
   status        String    // pending, in-progress, completed
   priority      String    // low, medium, high
   cost          Float?    // Cost of the maintenance work
-  vendorId      String?   // Optional reference to a vendor
-  vendor        Vendor?   @relation(fields: [vendorId], references: [id])
+  vendorName    String?   // Name of the assigned vendor
+  vendorContact String?   // Contact info for the vendor
   notes         String?   // Additional notes about the maintenance
   completedDate DateTime? // When the maintenance was completed
   createdAt     DateTime  @default(now())
@@ -123,7 +124,6 @@ model MaintenanceRequest {
   messages      MaintenanceMessage[]
 
   @@index([propertyId])
-  @@index([vendorId])
 }
 
 model PortfolioSnapshot {
@@ -131,8 +131,6 @@ model PortfolioSnapshot {
   totalValue    Float
   monthlyIncome Float
   snapshotDate  DateTime  @default(now())
-
-  @@index([snapshotDate])
 }
 
 model Tenant {
@@ -277,23 +275,20 @@ model RentPayment {
 
 // Notification System Models
 model Notification {
-  id                String    @id @default(cuid())
-  userId            String
-  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  message           String
-  type              NotificationType
-  isRead            Boolean   @default(false)
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-
-  propertyId        String?
-  property          Property? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
-
-  tenantId          String?
-  tenant            Tenant?   @relation(fields: [tenantId], references: [id], onDelete: SetNull)
-
-  relatedEntityType String?
-  relatedEntityId   String?
+  id                  String             @id @default(cuid())
+  userId              String
+  user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  message             String
+  type                NotificationType
+  isRead              Boolean            @default(false)
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  propertyId          String?
+  property            Property?          @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+  tenantId            String?
+  tenant              Tenant?            @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+  relatedEntityType   String?
+  relatedEntityId     String?
 
   @@index([userId, isRead, createdAt])
   @@index([propertyId])
@@ -311,44 +306,27 @@ enum NotificationType {
   // Add more types as needed
 }
 
-// Maintenance Request System Models
-model Vendor {
-  id            String    @id @default(uuid())
-  name          String
-  email         String
-  phone         String
-  category      String    // plumber, electrician, general, etc.
-  rating        Int?      // 1-5 rating
-  notes         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  maintenanceRequests MaintenanceRequest[]
-
-  @@index([category])
-  @@index([email])
-}
-
 model MaintenanceMessage {
-  id                  String    @id @default(uuid())
-  message             String
-  createdAt           DateTime  @default(now())
-  senderType          String    // landlord, tenant, vendor
+  id                   String             @id @default(uuid())
+  content              String
+  createdAt            DateTime           @default(now())
+  userId               String // ID of the user who sent the message
+  user                 User               @relation(fields: [userId], references: [id])
   maintenanceRequestId String
-  maintenanceRequest  MaintenanceRequest @relation(fields: [maintenanceRequestId], references: [id])
+  maintenanceRequest   MaintenanceRequest @relation(fields: [maintenanceRequestId], references: [id])
 
   @@index([maintenanceRequestId])
-  @@index([createdAt])
+  @@index([userId])
 }
 
 model PropertyImage {
   id          String   @id @default(uuid())
-  imageUrl    String   // Public URL from Supabase Storage
-  storagePath String   // Path to the file in Supabase Storage (e.g., property-images/propertyId/filename.jpg)
+  imageUrl    String // Public URL from Supabase Storage
+  storagePath String // Path to the file in Supabase Storage (e.g., property-images/propertyId/filename.jpg)
   altText     String?
   isPrimary   Boolean  @default(false)
   uploadedAt  DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
   propertyId  String
   property    Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
