@@ -25,6 +25,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import Link from "next/link";
 
 // Define the Property type
 type Property = {
@@ -67,8 +68,6 @@ export function PropertyDashboard({
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedProperty, setSelectedProperty] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState("overview");
   const [isAddPropertyOpen, setIsAddPropertyOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -162,10 +161,6 @@ export function PropertyDashboard({
     return a.address.localeCompare(b.address); // sort by name
   });
 
-  const property = selectedProperty
-    ? properties.find((p) => p.id === selectedProperty)
-    : null;
-
   return (
     <div className="space-y-6">
       {loading ? (
@@ -184,54 +179,63 @@ export function PropertyDashboard({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative">
           {sortedProperties.length > 0 ? (
             sortedProperties.map((property) => (
-              <motion.div
+              <Link
+                href={`/dashboard/properties/${property.id}`}
                 key={property.id}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ duration: 0.2 }}
-                className="relative rounded-lg overflow-hidden border border-border bg-card/50 cursor-pointer"
-                onClick={() => setSelectedProperty(property.id)}
+                passHref
               >
-                <div className="relative h-40">
-                  <img
-                    src={property.image || "/house-placeholder.svg"}
-                    alt={property.address}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                  <Badge
-                    className={`absolute top-2 right-2 ${
-                      property.occupancy === "occupied"
-                        ? "bg-green-500"
-                        : "bg-gray-500"
-                    }`}
-                  >
-                    {property.occupancy === "occupied" ? "Occupied" : "Vacant"}
-                  </Badge>
-                </div>
-                <div className="p-4">
-                  <h3 className="font-medium text-primary-foreground truncate">
-                    {property.address}
-                  </h3>
-                  <div className="flex justify-between items-center mt-2">
-                    <span className="text-lg font-bold text-primary glow-text">
-                      {formatCurrency(property.value)}
-                    </span>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>View Details</DropdownMenuItem>
-                        <DropdownMenuItem>Edit Property</DropdownMenuItem>
-                        <DropdownMenuItem>Remove Property</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ duration: 0.2 }}
+                  className="relative rounded-lg overflow-hidden border border-border bg-card/50 cursor-pointer h-full flex flex-col"
+                >
+                  <div className="relative h-40">
+                    <img
+                      src={property.image || "/house-placeholder.svg"}
+                      alt={property.address}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                    <Badge
+                      className={`absolute top-2 right-2 ${
+                        property.occupancy === "occupied"
+                          ? "bg-green-500"
+                          : "bg-gray-500"
+                      }`}
+                    >
+                      {property.occupancy === "occupied"
+                        ? "Occupied"
+                        : "Vacant"}
+                    </Badge>
                   </div>
-                </div>
-              </motion.div>
+                  <div className="p-4 flex-grow flex flex-col justify-between">
+                    <div>
+                      <h3 className="font-medium text-primary-foreground truncate">
+                        {property.address}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {property.city}, {property.state}
+                      </p>
+                    </div>
+                    <div className="flex justify-between items-center mt-2">
+                      <span className="text-lg font-bold text-primary glow-text">
+                        {formatCurrency(property.value)}
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={(e) => {
+                          e.preventDefault(); /* more options dropdown can be added here */
+                        }}
+                      >
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </motion.div>
+              </Link>
             ))
           ) : (
             <div className="col-span-3 flex flex-col items-center justify-center py-12">
@@ -248,335 +252,15 @@ export function PropertyDashboard({
             className="relative rounded-lg overflow-hidden border border-dashed border-border bg-card/30 cursor-pointer h-full min-h-[220px] flex flex-col items-center justify-center p-6"
             onClick={() => setIsAddPropertyOpen(true)}
           >
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-              <Plus className="h-8 w-8 text-primary" />
+            <div className="text-center">
+              <Plus className="mx-auto h-12 w-12 text-muted-foreground" />
+              <h3 className="mt-2 text-sm font-medium text-primary-foreground">
+                Add New Property
+              </h3>
             </div>
-            <h3 className="font-medium text-primary-foreground text-center">
-              Add New Property
-            </h3>
-            <p className="text-sm text-muted-foreground text-center mt-2">
-              Expand your portfolio with a new investment
-            </p>
           </motion.div>
         </div>
       )}
-
-      <AnimatePresence>
-        {selectedProperty && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm"
-          >
-            <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.9 }}
-              transition={{ duration: 0.2 }}
-              className="bg-card border border-border rounded-lg shadow-lg w-full max-w-3xl max-h-[90vh] overflow-auto"
-            >
-              {property && (
-                <>
-                  <div className="p-6">
-                    <div className="flex justify-between items-center mb-6">
-                      <h2 className="text-xl font-bold text-primary-foreground">
-                        Property Details
-                      </h2>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setSelectedProperty(null)}
-                      >
-                        <X className="h-5 w-5" />
-                      </Button>
-                    </div>
-
-                    <div className="relative h-48 rounded-lg overflow-hidden mb-6">
-                      <img
-                        src={property.image || "/house-placeholder.svg"}
-                        alt={property.address}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                      <Badge
-                        className={`absolute top-2 right-2 ${
-                          property.occupancy === "occupied"
-                            ? "bg-green-500"
-                            : "bg-gray-500"
-                        }`}
-                      >
-                        {property.occupancy === "occupied"
-                          ? "Occupied"
-                          : "Vacant"}
-                      </Badge>
-                    </div>
-
-                    <div className="flex space-x-2 mb-6">
-                      <Button
-                        variant={
-                          activeTab === "overview" ? "default" : "outline"
-                        }
-                        onClick={() => setActiveTab("overview")}
-                        className="flex-1"
-                      >
-                        Overview
-                      </Button>
-                      <Button
-                        variant={
-                          activeTab === "tenants" ? "default" : "outline"
-                        }
-                        onClick={() => setActiveTab("tenants")}
-                        className="flex-1"
-                      >
-                        Tenants
-                      </Button>
-                      <Button
-                        variant={
-                          activeTab === "financials" ? "default" : "outline"
-                        }
-                        onClick={() => setActiveTab("financials")}
-                        className="flex-1"
-                      >
-                        Financials
-                      </Button>
-                      <Button
-                        variant={
-                          activeTab === "maintenance" ? "default" : "outline"
-                        }
-                        onClick={() => setActiveTab("maintenance")}
-                        className="flex-1"
-                      >
-                        Maintenance
-                      </Button>
-                    </div>
-
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key={activeTab}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        {activeTab === "overview" && (
-                          <div className="space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
-                              <Card className="bg-card/50 border-border">
-                                <CardContent className="p-4">
-                                  <div className="text-sm text-muted-foreground">
-                                    Address
-                                  </div>
-                                  <div className="font-medium text-primary-foreground">
-                                    {property.address}
-                                  </div>
-                                </CardContent>
-                              </Card>
-                              <Card className="bg-card/50 border-border">
-                                <CardContent className="p-4">
-                                  <div className="text-sm text-muted-foreground">
-                                    Property Value
-                                  </div>
-                                  <div className="font-medium text-primary-foreground">
-                                    {formatCurrency(property.value)}
-                                  </div>
-                                </CardContent>
-                              </Card>
-                              <Card className="bg-card/50 border-border">
-                                <CardContent className="p-4">
-                                  <div className="text-sm text-muted-foreground">
-                                    Property Type
-                                  </div>
-                                  <div className="font-medium text-primary-foreground">
-                                    Single Family
-                                  </div>
-                                </CardContent>
-                              </Card>
-                              <Card className="bg-card/50 border-border">
-                                <CardContent className="p-4">
-                                  <div className="text-sm text-muted-foreground">
-                                    Purchase Date
-                                  </div>
-                                  <div className="font-medium text-primary-foreground">
-                                    {property.dateAdded}
-                                  </div>
-                                </CardContent>
-                              </Card>
-                            </div>
-                            <Button className="w-full">
-                              <Building className="mr-2 h-4 w-4" />
-                              Virtual Tour
-                            </Button>
-                          </div>
-                        )}
-
-                        {activeTab === "tenants" && (
-                          <div className="space-y-4">
-                            {property.occupancy === "occupied" ? (
-                              <Card className="bg-card/50 border-border">
-                                <CardContent className="p-4">
-                                  <div className="flex items-center justify-between">
-                                    <div>
-                                      <h3 className="font-medium text-primary-foreground">
-                                        John Smith
-                                      </h3>
-                                      <p className="text-sm text-muted-foreground">
-                                        Lease: Jan 2023 - Jan 2024
-                                      </p>
-                                    </div>
-                                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                                      <span className="text-primary font-medium">
-                                        JS
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <div className="mt-4">
-                                    <div className="flex justify-between text-sm mb-1">
-                                      <span className="text-muted-foreground">
-                                        Rent Payment
-                                      </span>
-                                      <span className="text-primary-foreground">
-                                        Due May 1, 2023
-                                      </span>
-                                    </div>
-                                    <Progress value={0} className="h-2" />
-                                  </div>
-                                  <Button className="w-full mt-4">
-                                    Message Tenant
-                                  </Button>
-                                </CardContent>
-                              </Card>
-                            ) : (
-                              <div className="flex flex-col items-center justify-center py-8">
-                                <Home className="h-12 w-12 text-muted-foreground mb-4" />
-                                <h3 className="text-lg font-medium text-primary-foreground mb-2">
-                                  No Active Tenants
-                                </h3>
-                                <p className="text-sm text-muted-foreground mb-4">
-                                  This property is currently vacant
-                                </p>
-                                <Button>Add Tenant</Button>
-                              </div>
-                            )}
-                          </div>
-                        )}
-
-                        {activeTab === "financials" && (
-                          <div className="space-y-4">
-                            <Card className="bg-card/50 border-border">
-                              <CardContent className="p-4">
-                                <h3 className="font-medium text-primary-foreground mb-4">
-                                  Monthly Cash Flow
-                                </h3>
-                                <div className="space-y-2">
-                                  <div className="flex justify-between">
-                                    <span className="text-muted-foreground">
-                                      Rental Income
-                                    </span>
-                                    <span className="text-primary-foreground">
-                                      {formatCurrency(property.rentAmount || 0)}
-                                    </span>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className="text-muted-foreground">
-                                      Mortgage
-                                    </span>
-                                    <span className="text-primary-foreground">
-                                      -$1,200
-                                    </span>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className="text-muted-foreground">
-                                      Property Tax
-                                    </span>
-                                    <span className="text-primary-foreground">
-                                      -$350
-                                    </span>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className="text-muted-foreground">
-                                      Insurance
-                                    </span>
-                                    <span className="text-primary-foreground">
-                                      -$100
-                                    </span>
-                                  </div>
-                                  <div className="flex justify-between">
-                                    <span className="text-muted-foreground">
-                                      Maintenance
-                                    </span>
-                                    <span className="text-primary-foreground">
-                                      -$150
-                                    </span>
-                                  </div>
-                                  <div className="border-t border-border my-2" />
-                                  <div className="flex justify-between font-medium">
-                                    <span className="text-primary-foreground">
-                                      Net Cash Flow
-                                    </span>
-                                    <span className="text-primary glow-text">
-                                      {formatCurrency(
-                                        (property.rentAmount || 0) - 1800
-                                      )}
-                                    </span>
-                                  </div>
-                                </div>
-                              </CardContent>
-                            </Card>
-                            <Button className="w-full">
-                              View Financial Projections
-                            </Button>
-                          </div>
-                        )}
-
-                        {activeTab === "maintenance" && (
-                          <div className="space-y-4">
-                            <Card className="bg-card/50 border-border">
-                              <CardContent className="p-4">
-                                <h3 className="font-medium text-primary-foreground mb-4">
-                                  Maintenance Tickets
-                                </h3>
-                                <div className="space-y-4">
-                                  <div className="flex items-center justify-between">
-                                    <div>
-                                      <h4 className="font-medium text-primary-foreground">
-                                        Leaking Faucet
-                                      </h4>
-                                      <p className="text-sm text-muted-foreground">
-                                        Reported: Apr 28, 2023
-                                      </p>
-                                    </div>
-                                    <Badge>In Progress</Badge>
-                                  </div>
-                                  <div className="flex items-center justify-between">
-                                    <div>
-                                      <h4 className="font-medium text-primary-foreground">
-                                        HVAC Service
-                                      </h4>
-                                      <p className="text-sm text-muted-foreground">
-                                        Scheduled: May 15, 2023
-                                      </p>
-                                    </div>
-                                    <Badge variant="outline">Scheduled</Badge>
-                                  </div>
-                                </div>
-                              </CardContent>
-                            </Card>
-                            <Button className="w-full">
-                              Create Maintenance Ticket
-                            </Button>
-                          </div>
-                        )}
-                      </motion.div>
-                    </AnimatePresence>
-                  </div>
-                </>
-              )}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Add Property Modal */}
       <AnimatePresence>
