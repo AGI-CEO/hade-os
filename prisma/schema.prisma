@@ -81,27 +81,26 @@ model VerificationToken {
 }
 
 model Property {
-  id                String    @id @default(uuid())
-  address           String
-  city              String
-  state             String
-  zipCode           String
-  image             String?
-  value             Float
-  occupancy         String    // occupied, vacant
-  rentAmount        Float?
-  rentDue           DateTime?
-  dateAdded         DateTime  @default(now())
-  userId            String
-  user              User      @relation(fields: [userId], references: [id])
+  id                  String               @id @default(uuid())
+  address             String
+  city                String
+  state               String
+  zipCode             String
+  image               String?
+  value               Float
+  occupancy           String // occupied, vacant
+  rentAmount          Float?
+  rentDue             DateTime?
+  dateAdded           DateTime             @default(now())
+  userId              String
+  user                User                 @relation(fields: [userId], references: [id])
   maintenanceRequests MaintenanceRequest[]
-  tenants           Tenant[]
-  leases            Lease[]
-  documents         Document[]    @relation("PropertyDocuments")
-  incomes           Income[]
-  expenses          Expense[]
-  notifications     Notification[]
-  propertyImages    PropertyImage[]
+  tenants             Tenant[]
+  leases              Lease[]
+  documents           Document[]           @relation("PropertyDocuments")
+  transactions        Transaction[]
+  notifications       Notification[]
+  propertyImages      PropertyImage[]
 
   @@index([userId])
 }
@@ -225,43 +224,40 @@ model Document {
 }
 
 // Financial Tracking Models
-model Income {
-  id            String    @id @default(uuid())
-  amount        Float
-  date          DateTime
-  category      String    // rent, other
-  description   String?
-  recurring     Boolean   @default(false)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  propertyId    String
-  property      Property  @relation(fields: [propertyId], references: [id])
+enum FinancialTransactionType {
+  INCOME
+  EXPENSE
+}
+
+model FinancialCategory {
+  id           String        @id @default(uuid())
+  name         String
+  type         FinancialTransactionType
+  transactions Transaction[]
+
+  @@unique([name, type])
+}
+
+model Transaction {
+  id          String                 @id @default(uuid())
+  amount      Float
+  date        DateTime
+  description String?
+  type        FinancialTransactionType
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+  propertyId  String
+  property    Property               @relation(fields: [propertyId], references: [id])
+  categoryId  String
+  category    FinancialCategory      @relation(fields: [categoryId], references: [id])
 
   @@index([propertyId])
   @@index([date])
-  @@index([category])
+  @@index([type])
+  @@index([categoryId])
 }
 
-model Expense {
-  id            String    @id @default(uuid())
-  amount        Float
-  date          DateTime
-  category      String    // maintenance, taxes, insurance, utilities, etc.
-  description   String?
-  recurring     Boolean   @default(false)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  propertyId    String
-  property      Property  @relation(fields: [propertyId], references: [id])
-  vendorId      String?
-  vendor        Vendor?   @relation(fields: [vendorId], references: [id])
-
-  @@index([propertyId])
-  @@index([date])
-  @@index([category])
-  @@index([vendorId])
-}
-
+// Rent Payment Models
 model RentPayment {
   id            String    @id @default(uuid())
   amount        Float
