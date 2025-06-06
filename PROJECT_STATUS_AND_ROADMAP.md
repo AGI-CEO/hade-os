@@ -134,7 +134,7 @@ _ Ensure "Complete CRUD operations for properties" (verify thoroughness beyond b
 _ Develop/Enhance property details dashboard to be "comprehensive".
 _ Implement property value history tracking (if not fully covered by basic tracking).
 _ Implement property occupancy status management (beyond basic tracking).
-\_ Add property image upload and management. (Backend Implemented: Schema, Migrations, API for upload/list/delete. Frontend Pending.)
+\_ ✅ Add property image upload and management. (Backend & Frontend Implemented: Schema, Migrations, API for upload/list/delete, and UI for full CRUD operations.)
 
 **2. Tenant Management Enhancements (from PRD Sec 4.1.2)**
 _ Ensure "Complete CRUD operations for tenants" (verify thoroughness beyond basic).
