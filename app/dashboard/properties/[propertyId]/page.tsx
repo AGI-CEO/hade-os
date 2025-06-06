@@ -12,6 +12,7 @@ import {
   ImageIcon,
 } from "lucide-react";
 import { PropertyImageManager } from "@/components/properties/PropertyImageManager";
+import { FinancialsDashboard } from "@/components/financials/FinancialsDashboard";
 
 // Define the Property type to include images
 type PropertyImage = {
@@ -173,6 +174,10 @@ export default function PropertyDetailPage({
             </ul>
           </div>
         </div>
+      </div>
+      {/* Financials Section */}
+      <div>
+        <FinancialsDashboard propertyId={property.id} />
       </div>
     </div>
   );
