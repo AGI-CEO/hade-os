@@ -11,7 +11,7 @@
 - ✅ Core property and tenant management implemented
 - ✅ Lease management system fully implemented
 - ✅ Document management system fully implemented
-- 🔄 Financial tracking enhancements in progress
+- ✅ Enhanced Financial Tracking implemented
 - 🔄 Tenant portal improvements in progress
 - 🔄 Notification system in progress
 - 🔄 Maintenance request system improvements in progress
@@ -48,11 +48,10 @@ _ Tenant dashboard with basic information
 _ Simple navigation between different sections
 _ _Note: PRD Sec 4.6 outlines goals for comprehensive dashboards._
 
-**6. Basic Financial Tracking (Initial Implementation)**
-_ Property value tracking
-_ Rent amount tracking
-_ Simple financial overview
-_ _Note: Enhanced financial tracking is in progress as per PRD Sec 7 & 9._
+**6. Enhanced Financial Tracking (Implemented as per PRD Sec 7)**
+_ Full CRUD for income and expense tracking via unified Transaction model.
+_ Comprehensive financial dashboard with data visualization.
+\_ _Note: ROI, cash flow calculations, and reporting to be implemented in a future iteration._
 
 **7. Lease Management System (Fully Implemented as per PRD Sec 7)**
 _ Lease template creation and management
@@ -91,19 +90,13 @@ _ Association of documents with properties, tenants, and leases \* _Note: PRD Se
 
 These features are marked as "in progress" in the PRD (Sec 9) and are critical for MVP completion.
 
-**1. Enhanced Financial Tracking (Continuing from PRD Sec 7.2)**
-_ Implement full CRUD for income and expense tracking.
-_ Develop a comprehensive financial dashboard with real data visualization.
-_ Implement ROI and cash flow calculations.
-_ Build financial reporting capabilities (e.g., monthly summaries, property-level reports). \* **Reference:** PRD Section 4.5 for detailed requirements.
-
-**2. Improved Tenant Portal (Continuing from PRD Sec 7.4)**
+**1. Improved Tenant Portal (Continuing from PRD Sec 7.4)**
 _ Develop enhanced rent payment tracking view for tenants.
 _ Implement tenant account settings and preferences management.
 _ Ensure all relevant documents and lease information are easily accessible.
 _ **Reference:** PRD Section 4.6.2 for detailed requirements.
 
-**3. Notification System (Continuing from PRD Sec 7.5)**
+**2. Notification System (Continuing from PRD Sec 7.5)**
 _ **Phase 1 (Infrastructure):**
 _ ✅ `Notification` data model added to `prisma/schema.prisma` (includes `id`, `userId`, `user` relation, `message`, `type` (enum `NotificationType`), `relatedEntityType`, `relatedEntityId`, `isRead`, `createdAt`, `updatedAt`).
 _ ✅ `User` model in `prisma/schema.prisma` updated with `notifications Notification[]` relation.
@@ -117,7 +110,7 @@ _ 🔄 Create a general system notification framework for other alerts (e.g., ne
 
 - **Reference:** PRD Section 4.2.1 (lease renewal), 4.3.2 (maintenance updates). Note: The new model and APIs support these.
 
-**4. Maintenance Request System Improvements (Continuing from PRD Sec 7.6)**
+**3. Maintenance Request System Improvements (Continuing from PRD Sec 7.6)**
 _ Build a dedicated landlord interface for managing maintenance requests (beyond basic list).
 _ Implement functionality for assigning requests to vendors/contractors (initially manual assignment).
 _ Add cost tracking for maintenance work associated with requests.
