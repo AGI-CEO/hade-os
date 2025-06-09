@@ -53,7 +53,13 @@ _ Full CRUD for income and expense tracking via unified Transaction model.
 _ Comprehensive financial dashboard with data visualization.
 \_ _Note: ROI, cash flow calculations, and reporting to be implemented in a future iteration._
 
-**7. Lease Management System (Fully Implemented as per PRD Sec 7)**
+**7. Rent and Lease Management - Rent Payment Tracking (Fully Implemented as per PRD Sec 4.2.2)**
+_ Automated generation of rent payment schedules upon lease activation.
+_ Dynamic status tracking for payments (Upcoming, Unpaid, Paid, Late).
+_ Landlord interface to manually record rent payments, which creates an associated income transaction.
+_ Comprehensive rent payment history table integrated into the lease details view.
+
+**8. Lease Management System (Fully Implemented as per PRD Sec 7)**
 _ Lease template creation and management
 _ Lease generation with property/tenant data
 _ Lease storage and retrieval
@@ -62,7 +68,7 @@ _ Tenant access to lease documents
 _ Lease editing and updating
 _ Association of documents with properties, tenants, and leases \* \_Note: PRD Sec 4.4 includes "Custom Document Generation" as an MVP goal for Document Management._
 
-**8. Document Management System (Fully Implemented as per PRD Sec 7)**
+**9. Document Management System (Fully Implemented as per PRD Sec 7)**
 _ Document upload and storage (Supabase Storage)
 _ Document categorization
 _ Document sharing between landlord and tenant
@@ -70,7 +76,7 @@ _ Document viewing and downloading
 _ Document search and filtering
 _ Association of documents with properties, tenants, and leases \* _Note: PRD Sec 4.4 includes "Custom Document Generation" as an MVP goal for Document Management._
 
-**9. Maintenance Request System Improvements (Fully Implemented as per PRD Sec 7.6)**
+**10. Maintenance Request System Improvements (Fully Implemented as per PRD Sec 7.6)**
 _ Dedicated landlord interface for managing maintenance requests.
 _ Manual assignment of vendors/contractors with cost tracking.
 _ Maintenance history reporting.
