@@ -29,7 +29,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
+import { RentPaymentsTab } from "@/components/rent-payments-tab";
 
 type LeaseViewerProps = {
   leaseId: string;
@@ -140,8 +142,12 @@ export function LeaseViewer({ leaseId }: LeaseViewerProps) {
     return (
       <div className="text-center py-6">
         <AlertCircle className="h-10 w-10 mx-auto text-red-500 mb-2" />
-        <h3 className="font-medium text-primary-foreground mb-1">Error loading data</h3>
-        <p className="text-sm text-muted-foreground mb-4">{error || "Lease not found"}</p>
+        <h3 className="font-medium text-primary-foreground mb-1">
+          Error loading data
+        </h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          {error || "Lease not found"}
+        </p>
         <Button size="sm" onClick={() => router.push("/dashboard/leases")}>
           Back to Leases
         </Button>
@@ -153,10 +159,13 @@ export function LeaseViewer({ leaseId }: LeaseViewerProps) {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-primary-foreground">{lease.title}</h1>
+          <h1 className="text-2xl font-bold text-primary-foreground">
+            {lease.title}
+          </h1>
           <p className="text-muted-foreground">
             Created on {formatDate(lease.createdAt)}
-            {lease.createdAt !== lease.updatedAt && ` • Updated on ${formatDate(lease.updatedAt)}`}
+            {lease.createdAt !== lease.updatedAt &&
+              ` • Updated on ${formatDate(lease.updatedAt)}`}
           </p>
         </div>
         <div className="flex gap-2">
@@ -177,194 +186,186 @@ export function LeaseViewer({ leaseId }: LeaseViewerProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 space-y-6">
-          <Card className="bg-card border-border">
-            <CardHeader className="pb-2">
-              <div className="flex justify-between items-center">
-                <CardTitle className="text-primary-foreground flex items-center">
-                  <FileText className="mr-2 h-5 w-5 text-primary" />
-                  Lease Agreement
-                </CardTitle>
-                <Badge
-                  className={
-                    lease.status === "active"
-                      ? "bg-green-500"
-                      : lease.status === "draft"
-                      ? "bg-amber-500"
-                      : lease.status === "expired"
-                      ? "bg-gray-500"
-                      : "bg-blue-500"
-                  }
-                >
-                  {lease.status === "active"
-                    ? "Active"
-                    : lease.status === "draft"
-                    ? "Draft"
-                    : lease.status === "expired"
-                    ? "Expired"
-                    : "Renewed"}
-                </Badge>
-              </div>
-              <CardDescription>
-                {lease.status === "active" && (
-                  <div className="flex items-center gap-1 text-green-500">
-                    <CheckCircle className="h-3.5 w-3.5" />
-                    <span>Active lease from {formatDate(lease.startDate)} to {formatDate(lease.endDate)}</span>
+      <Tabs defaultValue="agreement">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="agreement">
+            <FileText className="mr-2 h-4 w-4" />
+            Lease Agreement
+          </TabsTrigger>
+          <TabsTrigger value="payments">
+            <DollarSign className="mr-2 h-4 w-4" />
+            Rent Payments
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="agreement">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+            <div className="md:col-span-2 space-y-6">
+              <Card className="bg-card border-border">
+                <CardHeader className="pb-2">
+                  <div className="flex justify-between items-center">
+                    <CardTitle className="text-primary-foreground flex items-center">
+                      <FileSignature className="mr-2 h-5 w-5 text-primary" />
+                      Lease Details
+                    </CardTitle>
+                    <Badge
+                      className={
+                        lease.status === "active"
+                          ? "bg-green-500"
+                          : lease.status === "draft"
+                          ? "bg-amber-500"
+                          : lease.status === "expired"
+                          ? "bg-gray-500"
+                          : "bg-blue-500"
+                      }
+                    >
+                      {lease.status === "active"
+                        ? "Active"
+                        : lease.status === "draft"
+                        ? "Draft"
+                        : lease.status === "expired"
+                        ? "Expired"
+                        : "Renewed"}
+                    </Badge>
                   </div>
-                )}
-                {lease.status === "draft" && (
-                  <div className="flex items-center gap-1 text-amber-500">
-                    <Clock className="h-3.5 w-3.5" />
-                    <span>Draft lease awaiting finalization</span>
-                  </div>
-                )}
-                {lease.status === "expired" && (
-                  <div className="flex items-center gap-1 text-gray-500">
-                    <AlertCircle className="h-3.5 w-3.5" />
-                    <span>Expired lease (ended {formatDate(lease.endDate)})</span>
-                  </div>
-                )}
-                {lease.status === "renewed" && (
-                  <div className="flex items-center gap-1 text-blue-500">
-                    <FileSignature className="h-3.5 w-3.5" />
-                    <span>Renewed lease (original ended {formatDate(lease.endDate)})</span>
-                  </div>
-                )}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="prose prose-sm dark:prose-invert max-w-none">
-                <div dangerouslySetInnerHTML={{ __html: lease.content.replace(/\n/g, '<br>') }} />
-              </div>
-            </CardContent>
-            {lease.status === "draft" && (
-              <CardFooter>
-                <Button className="w-full">
-                  <FileSignature className="mr-2 h-4 w-4" />
-                  Finalize Lease
-                </Button>
-              </CardFooter>
-            )}
-          </Card>
-
-          {lease.documents.length > 0 && (
-            <Card className="bg-card border-border">
-              <CardHeader>
-                <CardTitle className="text-primary-foreground flex items-center">
-                  <FileText className="mr-2 h-5 w-5 text-primary" />
-                  Related Documents
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  {lease.documents.map((doc) => (
-                    <li key={doc.id} className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <FileText className="h-4 w-4 mr-2 text-primary" />
-                        <span>{doc.name}</span>
-                        <Badge variant="outline" className="ml-2">
-                          {doc.fileType.toUpperCase()}
-                        </Badge>
+                  <CardDescription>
+                    {lease.status === "active" && (
+                      <div className="flex items-center gap-1 text-green-500">
+                        <CheckCircle className="h-3.5 w-3.5" />
+                        <span>
+                          Active lease from {formatDate(lease.startDate)} to{" "}
+                          {formatDate(lease.endDate)}
+                        </span>
                       </div>
-                      <Button size="sm" variant="ghost">
-                        <Download className="h-4 w-4" />
-                      </Button>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+                    )}
+                    {lease.status === "draft" && (
+                      <div className="flex items-center gap-1 text-amber-500">
+                        <Clock className="h-3.5 w-3.5" />
+                        <span>Draft lease awaiting finalization</span>
+                      </div>
+                    )}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div
+                    className="prose prose-sm dark:prose-invert max-w-none"
+                    dangerouslySetInnerHTML={{
+                      __html: lease.content.replace(/\n/g, "<br />"),
+                    }}
+                  />
+                </CardContent>
+              </Card>
+            </div>
 
-        <div className="space-y-6">
-          <Card className="bg-card border-border">
-            <CardHeader>
-              <CardTitle className="text-primary-foreground flex items-center">
-                <Home className="mr-2 h-5 w-5 text-primary" />
-                Property Details
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <h4 className="text-sm font-medium text-muted-foreground mb-1">Address</h4>
-                <p className="text-primary-foreground">
-                  {lease.property.address}
-                  <br />
-                  {lease.property.city}, {lease.property.state} {lease.property.zipCode}
-                </p>
-              </div>
-              <Link href={`/dashboard/properties/${lease.property.id}`}>
-                <Button size="sm" variant="outline" className="w-full">
-                  View Property
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
+            <div className="space-y-6">
+              <Card className="bg-card border-border">
+                <CardHeader>
+                  <CardTitle className="text-primary-foreground flex items-center">
+                    <Home className="mr-2 h-5 w-5 text-primary" />
+                    Property Details
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                      Address
+                    </h4>
+                    <p className="text-primary-foreground">
+                      {lease.property.address}
+                      <br />
+                      {lease.property.city}, {lease.property.state}{" "}
+                      {lease.property.zipCode}
+                    </p>
+                  </div>
+                  <Link href={`/dashboard/properties/${lease.property.id}`}>
+                    <Button size="sm" variant="outline" className="w-full">
+                      View Property
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
 
-          <Card className="bg-card border-border">
-            <CardHeader>
-              <CardTitle className="text-primary-foreground flex items-center">
-                <User className="mr-2 h-5 w-5 text-primary" />
-                Tenant Details
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <h4 className="text-sm font-medium text-muted-foreground mb-1">Name</h4>
-                <p className="text-primary-foreground">{lease.tenant.name}</p>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-muted-foreground mb-1">Contact</h4>
-                <p className="text-primary-foreground">
-                  {lease.tenant.email}
-                  <br />
-                  {lease.tenant.phone}
-                </p>
-              </div>
-              <Link href={`/dashboard/tenants/${lease.tenant.id}`}>
-                <Button size="sm" variant="outline" className="w-full">
-                  View Tenant
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
+              <Card className="bg-card border-border">
+                <CardHeader>
+                  <CardTitle className="text-primary-foreground flex items-center">
+                    <User className="mr-2 h-5 w-5 text-primary" />
+                    Tenant Details
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                      Name
+                    </h4>
+                    <p className="text-primary-foreground">
+                      {lease.tenant.name}
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                      Contact
+                    </h4>
+                    <p className="text-primary-foreground">
+                      {lease.tenant.email}
+                      <br />
+                      {lease.tenant.phone}
+                    </p>
+                  </div>
+                  <Link href={`/dashboard/tenants/${lease.tenant.id}`}>
+                    <Button size="sm" variant="outline" className="w-full">
+                      View Tenant
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
 
-          <Card className="bg-card border-border">
-            <CardHeader>
-              <CardTitle className="text-primary-foreground flex items-center">
-                <DollarSign className="mr-2 h-5 w-5 text-primary" />
-                Financial Details
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <h4 className="text-sm font-medium text-muted-foreground mb-1">Monthly Rent</h4>
-                <p className="text-xl font-semibold text-primary-foreground">
-                  {formatCurrency(lease.monthlyRent)}
-                </p>
-              </div>
-              {lease.securityDeposit && (
-                <div>
-                  <h4 className="text-sm font-medium text-muted-foreground mb-1">Security Deposit</h4>
-                  <p className="text-primary-foreground">{formatCurrency(lease.securityDeposit)}</p>
-                </div>
-              )}
-              <Separator />
-              <div>
-                <h4 className="text-sm font-medium text-muted-foreground mb-1">Lease Term</h4>
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-primary" />
-                  <p className="text-primary-foreground">
-                    {formatDate(lease.startDate)} - {formatDate(lease.endDate)}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+              <Card className="bg-card border-border">
+                <CardHeader>
+                  <CardTitle className="text-primary-foreground flex items-center">
+                    <DollarSign className="mr-2 h-5 w-5 text-primary" />
+                    Financial Details
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                      Monthly Rent
+                    </h4>
+                    <p className="text-xl font-semibold text-primary-foreground">
+                      {formatCurrency(lease.monthlyRent)}
+                    </p>
+                  </div>
+                  {lease.securityDeposit && (
+                    <div>
+                      <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                        Security Deposit
+                      </h4>
+                      <p className="text-primary-foreground">
+                        {formatCurrency(lease.securityDeposit)}
+                      </p>
+                    </div>
+                  )}
+                  <Separator />
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                      Lease Term
+                    </h4>
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-primary" />
+                      <p className="text-primary-foreground">
+                        {formatDate(lease.startDate)} -{" "}
+                        {formatDate(lease.endDate)}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </TabsContent>
+        <TabsContent value="payments">
+          <RentPaymentsTab leaseId={leaseId} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
