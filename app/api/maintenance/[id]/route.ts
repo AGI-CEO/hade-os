@@ -92,6 +92,44 @@ export async function PATCH(
       },
     });
 
+    // -------------------------------------------------
+    // Notification logic for status change
+    // -------------------------------------------------
+    try {
+      if (maintenanceRequest.status !== body.status) {
+        // fetch property tenants with users
+        const propertyWithTenants = await prisma.property.findUnique({
+          where: { id: maintenanceRequest.propertyId },
+          include: { tenants: true },
+        });
+
+        if (propertyWithTenants) {
+          const { tenants } = propertyWithTenants;
+          const { createNotification } = await import("@/lib/notifications");
+          const statusMsg = `Maintenance request \"${maintenanceRequest.title}\" status updated to ${body.status}`;
+
+          // Notify tenants who have user accounts
+          await Promise.all(
+            tenants
+              .filter((t: any) => t.userId)
+              .map((tenant: any) =>
+                createNotification({
+                  userId: tenant.userId!,
+                  message: statusMsg,
+                  type: "MAINTENANCE_STATUS_UPDATE" as any,
+                  propertyId: maintenanceRequest.propertyId,
+                  tenantId: tenant.id,
+                  relatedEntityType: "MaintenanceRequest",
+                  relatedEntityId: maintenanceRequest.id,
+                })
+              )
+          );
+        }
+      }
+    } catch (notificationError) {
+      console.error("Failed to create maintenance status notification:", notificationError);
+    }
+
     return NextResponse.json(updatedMaintenanceRequest);
   } catch (error) {
     console.error("Error updating maintenance request:", error);
