@@ -10,9 +10,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 // Define models based on the application's data requirements
@@ -37,6 +36,7 @@ model User {
 
   notifications        Notification[]
   maintenanceMessages  MaintenanceMessage[]
+  documentTemplates    DocumentTemplate[]
 
   @@index([email])
   @@index([userType])
@@ -49,12 +49,12 @@ model Account {
   type               String
   provider           String
   providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
+  refresh_token      String?
+  access_token       String?
   expires_at         Int?
   token_type         String?
   scope              String?
-  id_token           String?  @db.Text
+  id_token           String?
   session_state      String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -165,17 +165,34 @@ model LeaseTemplate {
   id            String    @id @default(uuid())
   name          String
   description   String?
-  content       String    @db.Text  // The template content in markdown or HTML
+  content       String    // The template content in markdown or HTML
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   userId        String    // The landlord who created the template
   leases        Lease[]   // Leases created from this template
 }
 
+// Document Template Models
+model DocumentTemplate {
+  id            String    @id @default(uuid())
+  name          String
+  description   String?
+  category      String    // notice, letter, form, etc.
+  content       String    // The template content in markdown or HTML
+  isSystem      Boolean   @default(false) // True for system-provided templates
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  userId        String    // The landlord who created the template
+  user          User      @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([category])
+}
+
 model Lease {
   id              String    @id @default(uuid())
   title           String
-  content         String    @db.Text  // The lease content in markdown or HTML
+  content         String    // The lease content in markdown or HTML
   startDate       DateTime
   endDate         DateTime
   status          String    // draft, active, expired, renewed
