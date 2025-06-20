@@ -1,5 +1,15 @@
 {
   "buildCommand": "prisma generate && node scripts/init-landlord-from-env.js && next build",
   "installCommand": "bun install",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "crons": [
+    {
+      "path": "/api/cron/rent-due-notifications",
+      "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/lease-renewal-reminders",
+      "schedule": "0 9 * * *"
+    }
+  ]
 }
