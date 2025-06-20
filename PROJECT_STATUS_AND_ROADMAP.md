@@ -117,7 +117,7 @@ _ ✅ API route `app/api/notifications/route.ts` created with `GET` handler to f
 _ ✅ API route `app/api/notifications/[notificationId]/read/route.ts` created with `PATCH` handler to mark notifications as read.
 _ **Phase 2 (Specific Notification Logic - To Do / In Progress):**
 _ 🔄 Implement rent due notifications for tenants and landlords (requires background job/scheduler and integration with lease/payment data).
-_ 🔄 Develop notifications for maintenance request status updates (requires integration with maintenance module logic).
+_ ✅ Maintenance request status update notifications implemented (API-level, see 2025-06-19 progress report). // integrated with maintenance module logic
 _ 🔄 Implement lease renewal reminders for landlords (requires background job/scheduler and integration with lease data).
 _ 🔄 Create a general system notification framework for other alerts (e.g., new document shared, triggered by respective modules).
 
