@@ -10,8 +10,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // Define models based on the application's data requirements
@@ -49,12 +50,12 @@ model Account {
   type               String
   provider           String
   providerAccountId  String
-  refresh_token      String?
-  access_token       String?
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
   expires_at         Int?
   token_type         String?
   scope              String?
-  id_token           String?
+  id_token           String?  @db.Text
   session_state      String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -165,7 +166,7 @@ model LeaseTemplate {
   id            String    @id @default(uuid())
   name          String
   description   String?
-  content       String    // The template content in markdown or HTML
+  content       String    @db.Text  // The template content in markdown or HTML
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   userId        String    // The landlord who created the template
@@ -178,7 +179,7 @@ model DocumentTemplate {
   name          String
   description   String?
   category      String    // notice, letter, form, etc.
-  content       String    // The template content in markdown or HTML
+  content       String    @db.Text  // The template content in markdown or HTML
   isSystem      Boolean   @default(false) // True for system-provided templates
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -192,7 +193,7 @@ model DocumentTemplate {
 model Lease {
   id              String    @id @default(uuid())
   title           String
-  content         String    // The lease content in markdown or HTML
+  content         String    @db.Text  // The lease content in markdown or HTML
   startDate       DateTime
   endDate         DateTime
   status          String    // draft, active, expired, renewed
