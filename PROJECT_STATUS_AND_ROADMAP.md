@@ -14,7 +14,7 @@
 - ✅ Enhanced Financial Tracking implemented
 - ✅ Maintenance Request System Improvements implemented
 - 🔄 Tenant portal improvements in progress
-- 🔄 Notification system in progress
+- ✅ Notification system (core modules and key notifications) implemented
 
 ### B. Detailed Implemented Features (Verified against PRD Section 3 & 7)
 
@@ -115,10 +115,10 @@ _ ✅ `Notification` data model added to `prisma/schema.prisma` (includes `id`, 
 _ ✅ `User` model in `prisma/schema.prisma` updated with `notifications Notification[]` relation.
 _ ✅ API route `app/api/notifications/route.ts` created with `GET` handler to fetch user's notifications.
 _ ✅ API route `app/api/notifications/[notificationId]/read/route.ts` created with `PATCH` handler to mark notifications as read.
-_ **Phase 2 (Specific Notification Logic - To Do / In Progress):**
-_ 🔄 Implement rent due notifications for tenants and landlords (requires background job/scheduler and integration with lease/payment data).
-_ ✅ Maintenance request status update notifications implemented (API-level, see 2025-06-19 progress report). // integrated with maintenance module logic
-_ 🔄 Implement lease renewal reminders for landlords (requires background job/scheduler and integration with lease data).
+_ **Phase 2 (Specific Notification Logic - Ongoing):**
+_ ✅ Rent due and overdue notifications for tenants and landlords implemented via scheduled cron (`/api/cron/rent-due-notifications`).
+_ ✅ Maintenance request status update notifications implemented (API-level integration with maintenance module).
+_ ✅ Lease renewal reminders for landlords and tenants implemented via scheduled cron (`/api/cron/lease-renewal-reminders`).
 _ 🔄 Create a general system notification framework for other alerts (e.g., new document shared, triggered by respective modules).
 
 - **Reference:** PRD Section 4.2.1 (lease renewal), 4.3.2 (maintenance updates). Note: The new model and APIs support these.
