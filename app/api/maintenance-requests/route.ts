@@ -54,6 +54,55 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // ---------------------------------------------
+    // Notification logic
+    // ---------------------------------------------
+    try {
+      const property = await prisma.property.findUnique({
+        where: { id: propertyId },
+        include: { tenants: true },
+      });
+
+      if (property) {
+        const { userId: landlordUserId, tenants } = property;
+
+        // If the request was created by a tenant, notify the landlord
+        if (user.userType === "tenant" && landlordUserId) {
+          const { createNotification } = await import("@/lib/notifications");
+          await createNotification({
+            userId: landlordUserId,
+            message: `New maintenance request \"${title}\" created by tenant`,
+            type: "MAINTENANCE_NEW_REQUEST" as any,
+            propertyId,
+            relatedEntityType: "MaintenanceRequest",
+            relatedEntityId: maintenanceRequest.id,
+          });
+        }
+
+        // If the request was created by landlord, notify tenants (with linked user accounts)
+        if (user.userType === "landlord" && tenants.length > 0) {
+          const { createNotification } = await import("@/lib/notifications");
+          await Promise.all(
+            tenants
+              .filter((t: any) => t.userId)
+              .map((tenant: any) =>
+                createNotification({
+                  userId: tenant.userId!,
+                  message: `A new maintenance request \"${title}\" has been created for your property`,
+                  type: "MAINTENANCE_NEW_REQUEST" as any,
+                  propertyId,
+                  tenantId: tenant.id,
+                  relatedEntityType: "MaintenanceRequest",
+                  relatedEntityId: maintenanceRequest.id,
+                })
+              )
+          );
+        }
+      }
+    } catch (notificationError) {
+      console.error("Failed to create maintenance notification:", notificationError);
+    }
+
     return NextResponse.json(maintenanceRequest);
   } catch (error) {
     console.error("Error creating maintenance request:", error);
