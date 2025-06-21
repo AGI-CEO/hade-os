@@ -48,7 +48,47 @@ export async function POST(request: Request) {
     const updatedDocument = await prisma.document.update({
       where: { id: body.documentId },
       data: { isShared: true },
+      include: {
+        property: {
+          include: {
+            tenants: {
+              include: {
+                user: true,
+              },
+            },
+          },
+        },
+      },
     });
+
+    // ---------------------------------------------
+    // Notification logic for shared document
+    // ---------------------------------------------
+    try {
+      if (updatedDocument.property) {
+        const { tenants } = updatedDocument.property;
+        const { createNotification } = await import("@/lib/notifications");
+
+        // Notify tenants who have user accounts
+        await Promise.all(
+          tenants
+            .filter((tenant: any) => tenant.userId)
+            .map((tenant: any) =>
+              createNotification({
+                userId: tenant.userId!,
+                message: `A new document "${updatedDocument.name}" has been shared with you`,
+                type: "NEW_DOCUMENT_SHARED" as any,
+                propertyId: updatedDocument.propertyId!,
+                tenantId: tenant.id,
+                relatedEntityType: "Document",
+                relatedEntityId: updatedDocument.id,
+              })
+            )
+        );
+      }
+    } catch (notificationError) {
+      console.error("Failed to create document share notification:", notificationError);
+    }
     
     return NextResponse.json({
       message: "Document shared successfully",
