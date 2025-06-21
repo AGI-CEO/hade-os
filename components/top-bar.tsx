@@ -3,8 +3,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {
-  Bell,
-  MessageSquare,
   Search,
   User,
   Settings,
@@ -25,6 +23,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
+import { NotificationsDropdown } from "@/components/notifications-dropdown";
 
 export function TopBar({ className }: { className?: string }) {
   const [searchFocused, setSearchFocused] = useState(false);
@@ -56,58 +55,7 @@ export function TopBar({ className }: { className?: string }) {
       </div>
 
       <div className="flex items-center gap-4">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell className="h-5 w-5" />
-              <Badge className="absolute -top-1 -right-1 h-4 w-4 p-0 flex items-center justify-center text-[10px]">
-                3
-              </Badge>
-              <span className="sr-only">Notifications</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            className="w-80 bg-card border-border"
-          >
-            <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <div className="max-h-80 overflow-y-auto">
-              {[1, 2, 3].map((i) => (
-                <DropdownMenuItem key={i} className="p-3 cursor-pointer">
-                  <div className="flex items-start gap-3">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback>
-                        {session?.user?.name?.charAt(0) || "U"}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 space-y-1">
-                      <p className="text-sm font-medium leading-none">
-                        {session?.user?.userType === "landlord"
-                          ? "New maintenance request"
-                          : "Maintenance update"}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {session?.user?.userType === "landlord"
-                          ? "A tenant submitted a new maintenance request"
-                          : "Your maintenance request has been updated"}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        2 hours ago
-                      </p>
-                    </div>
-                  </div>
-                </DropdownMenuItem>
-              ))}
-            </div>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer justify-center">
-              <span className="text-xs text-primary">
-                View all notifications
-              </span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <NotificationsDropdown />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
