@@ -56,10 +56,21 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
     });
 
+    // Get upcoming rent payments
+    const upcomingPayments = await prisma.rentPayment.findMany({
+      where: { 
+        tenantId: tenant.id,
+        status: { in: ["UPCOMING", "UNPAID", "LATE"] }
+      },
+      orderBy: { dueDate: "asc" },
+      take: 5,
+    });
+
     // Combine the data
     const tenantData = {
       ...tenant,
       maintenanceRequests,
+      upcomingPayments,
     };
 
     return NextResponse.json(tenantData);
