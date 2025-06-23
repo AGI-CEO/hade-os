@@ -25,8 +25,18 @@ export async function GET(req: Request) {
     const rentPayments = await prisma.rentPayment.findMany({
       where: { tenantId: tenant.id },
       include: {
-        tenant: {
-          include: {
+        transaction: {
+          select: {
+            id: true,
+            date: true,
+            description: true,
+            amount: true,
+          },
+        },
+        lease: {
+          select: {
+            id: true,
+            title: true,
             property: {
               select: {
                 address: true,
@@ -39,7 +49,7 @@ export async function GET(req: Request) {
         },
       },
       orderBy: {
-        paymentDate: "desc",
+        dueDate: "desc",
       },
     });
 
